@@ -1,0 +1,1841 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+        <script crossorigin="anonymous" src="https://polyfill.io/v3/polyfill.min.js?features=Promise%2CArray.prototype.forEach%2CString.prototype.includes%2CURLSearchParams%2CCustomEvent%2CArray.prototype.includes%2CArray.prototype.filter%2CArray.prototype.some%2CArray.prototype.find%2CArray.prototype.reduce%2CObject.assign%2CArray.isArray%2CObject.values%2CObject.entries%2CArray.from%2CSet%2CArray.prototype.findIndex"></script>
+<script crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/javascript-canvas-to-blob/3.15.0/js/canvas-to-blob.min.js"></script>
+
+        <script>
+// This is where we initialise any global variables, namespaced in "opensdg".
+var opensdg = {
+
+  // A base URL for asynchronous calls to SDG data.
+  remoteDataBaseUrl: 'https://sdg-prod-odsmexico.github.io/sdg-prod-data/en',
+
+  chartConfigAlterations: [],
+  // A hook which can be used to modify the configuration for Chart.js.
+  chartConfigAlter: function(callback) {
+    this.chartConfigAlterations.push(callback);
+  },
+
+  tableConfigAlterations: [],
+  // A hook which can be used to modify the configuration for Datatables.
+  tableConfigAlter: function(callback) {
+    this.tableConfigAlterations.push(callback);
+  },
+
+  // A hook which can be replaced to alter whether/how the values that are
+  // displayed on indicator tables/graphs get rounded. A "context" parameter
+  // is also passed which contains additional information.
+  dataRounding: function(value, context) {
+    // Alterations go here.
+    return value;
+  },
+
+  // A hook which can be used to alter the data before it is displayed on charts/tables.
+  dataDisplayAlterations: [],
+  dataDisplayAlter: function(callback) {
+    this.dataDisplayAlterations.push(callback);
+  },
+
+  // Disaggregations which should be ignored on indicator pages.
+  ignoredDisaggregations: null,
+
+  language: 'en',
+};
+
+</script>
+
+        <script>
+// JavaScript container for translation data.
+var translations = {
+  //Javascript version of the "t" filter from jekyll-open-sdg-plugins.
+  t: function(key) {
+
+    if (!key || typeof key !== 'string') {
+      return '';
+    }
+
+    // The majority of uses of this function are to translate disaggregation
+    // data. To spare data providers of needing to enter "data." in front of
+    // their disaggregation data, we specifically look for that here.
+    if (typeof this.data === 'object' && this.data !== null && this.data[key]) {
+      return this.data[key];
+    }
+
+    var originalKey = key;
+    var drilled = this;
+    var levelsDrilled = 0;
+    var levels = key.split('.');
+
+    for (var level in levels) {
+      // If we have drilled down to soon, abort.
+      if (typeof drilled !== 'object') {
+        break;
+      }
+
+      if (levels[level] in drilled) {
+        drilled = drilled[levels[level]];
+        levelsDrilled += 1;
+      }
+    }
+
+    // If we didn't drill the right number of levels, return the original string.
+    if (levels.length != levelsDrilled) {
+      return originalKey;
+    }
+
+    // Otherwise we must have drilled all the way.
+    return drilled;
+  },
+};
+</script>
+
+        <!-- Basic Page Needs
+        ================================================== -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"><!-- Mobile Specific Metas
+        ================================================== -->
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Title and meta description
+        ================================================== -->
+
+        
+    <title>
+        
+        Indicator 1.2.1.a1 -
+        
+        Proporción de la población que vive por debajo del umbral nacional de la pobreza, por desglose geográfico - Indicators For The Sustainable Development Goals
+    </title>
+
+
+
+        <meta name="description" content="">
+        <meta property="og:description" content="">
+        
+        <link rel="canonical" href="/">
+
+        <!--[if IE 9]>
+        <script src="/assets/js/lib/classList.js"></script>
+        <![endif]-->
+
+        <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16x16.png">
+<link rel="icon" type="image/x-icon" href="/assets/img/favicons/favicon.ico" />
+
+
+        
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <link res="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" crossorigin="">
+        <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/3.2.3/css/fixedColumns.dataTables.min.css" crossorigin="">
+        <link rel="stylesheet" href="/assets/css/style.css?v=20221117161900">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
+          integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+          crossorigin=""/>
+        <link rel="stylesheet" href="https://cdn.rawgit.com/socib/Leaflet.TimeDimension/master/dist/leaflet.timedimension.control.min.css"  crossorigin=""/>
+        <link rel="stylesheet" href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css'  crossorigin=""/>
+        <link rel="stylesheet" href="https://bowercdn.net/c/leaflet.zoomhome-latest/dist/leaflet.zoomhome.css"  crossorigin=""/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-search@2.9.7/dist/leaflet-search.min.css" crossorigin="">
+        <link rel="stylesheet" href="https://cdn.kiprotect.com/klaro/v0.7/klaro.min.css" crossorigin=""/>
+          <!-- Global site tag (gtag.js) - Google Analytics -->
+<script
+    
+    async
+    src="https://www.googletagmanager.com/gtag/js?id=G-R7QPWT5RB3"></script>
+<script >
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-R7QPWT5RB3', {
+    'anonymize_ip': true,
+    'forceSSL': true,
+  });
+</script>
+
+        
+        
+
+        <!--[if IE]>
+        <link rel="stylesheet" href="/assets/css/ie.css">
+        <![endif]-->
+
+        
+
+    </head>
+<body class="language-en
+layout-indicator
+">
+<!-- <div class="container"> -->
+
+<script>translations['header'] = {"alpha":"Alpha","default_contrast":"Default contrast","disable_high_contrast":"Disable high contrast","disclaimer":"This is a development website. We welcome your <a href=\"mailto:%email_contacts.suggestions\">feedback</a>.","enable_high_contrast":"Enable high contrast","hide_menu":"Hide navigation menu","high_contrast":"High contrast","internet_explorer_message":"We have detected that you are using Internet Explorer to visit this website. Internet Explorer is now being phased out by Microsoft. As a result, this website no longer supports any version of Internet Explorer. Some features on this site will not work. You should use a modern browser such as Edge, Chrome, Firefox, or Safari. If you have difficulty installing or accessing a different browser, please contact your IT support team.","internet_explorer_message_title":"This internet browser is no longer supported","logo_title":"Go to homepage","show_menu":"Show navigation menu","skip_link":"Skip to main content","tag_line":"17 Goals to Transform our World","toggle_menu":"Menu toggle. Click to expand or collapse the menu.","toggle_search":"Search toggle. Click to expand or collapse the search bar."};</script>
+
+<a class="sr-only-focusable" id="skiplink" href="#main-content" tabindex="0">Skip to main content</a>
+<div class="container internet-explorer-message">
+    <h2 class="internet-explorer-message-title">This internet browser is no longer supported</h2>
+    <p class="internet-explorer-message-body">We have detected that you are using Internet Explorer to visit this website. Internet Explorer is now being phased out by Microsoft. As a result, this website no longer supports any version of Internet Explorer. Some features on this site will not work. You should use a modern browser such as Edge, Chrome, Firefox, or Safari. If you have difficulty installing or accessing a different browser, please contact your IT support team.</p>
+</div>
+<div id="disclaimer">
+    
+<div class="container">
+  <div class="disclaimer-alert">
+    <strong class="phase-tag">Alpha</strong>
+    
+    This is a development website. We welcome your <a href="mailto:test@example.com">feedback</a>.
+    
+  </div>
+</div>
+
+</div>
+
+<header role="banner" class="">
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-light flex-wrap align-items-start">
+            <a class="navbar-brand" href="/en/" id="home" aria-label="Go to homepage" title="Go to homepage">
+    <img src="/assets/img/SDG_logo.png" alt="Sustainable Development Goals - 17 Goals to Transform our World" />
+</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Show navigation menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="d-flex flex-wrap w-100 justify-content-between">
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav" id="menu"><li class="nav-item ">
+    <a class="nav-link" href="/en/goals">Goals</a>
+</li><li class="nav-item ">
+    <a class="nav-link" href="/en/reporting-status">Reporting Status</a>
+</li><li class="nav-item ">
+    <a class="nav-link" href="/en/about">About</a>
+</li><li class="nav-item ">
+    <a class="nav-link" href="/en/faq">FAQ</a>
+</li><li class="nav-item ">
+    <a class="nav-link" href="/en/news">Updates</a>
+</li></ul>
+    
+                </div>
+                <div class="header-search-bar">
+                    <form class="align-self-lg-end" id="search" action="/en/search/">
+    <div class="input-group">
+        <label class="visually-hidden" for="indicator_search">Search</label>
+        <input class="form-control" type="search" name="q" id="indicator_search" title="Search">
+        <span class="input-group-append">
+            <button class="btn btn-outline-secondary ms-n5" aria-label="Site search" id="search-btn" type="submit">
+                <i class="fa fa-search"></i>
+            </button>
+        </span>
+    </div>
+</form>
+
+                </div>
+                <div class="header-toggles d-flex">
+
+
+
+
+
+  <div class="language-toggle-container">
+  
+  <div class="btn-group language-toggle-dropdown  dropdown">
+    <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="fa fa-globe"></i>
+      English
+    </button>
+    <ul class="dropdown-menu"><li>
+            <a class="dropdown-item" href="/1-2-1-a1/">
+              Español
+            </a>
+          </li></ul>
+  </div>
+</div>
+
+
+
+                    <span class="no-js-language-toggle"><div class="language-toggle-container d-flex">
+    <i class="fa fa-globe language-toggle-globe-links"></i>
+    <ul class="language-toggle-links list-unstyled list-inline"><li class="language-option-es list-inline-item">
+            <a class="language-toggle-link" href="/1-2-1-a1/">
+                Español
+            </a>
+        </li></ul>
+</div></span><a title="Enable high contrast" aria-label="Enable high contrast"
+    data-contrast-switch-to="" href="javascript:void(0)" data-on="click"
+data-event-category="Accessibility"
+data-event-action="Change contrast setting"
+data-event-label="high"
+>A</a>
+                </div>
+            </div>
+        </nav>
+    </div>
+</header>
+<div id="top" tabindex=-1></div>
+
+
+
+<script type="text/template" id="item_template">
+  <% _.each(fields, function(fieldItem) { %>
+    <div class="variable-selector
+      <% if(allowedFields.indexOf(fieldItem.field) == -1) { %> disallowed <% }%>
+      <% if (typeof childFields !== 'undefined' && childFields.indexOf(fieldItem.field) !== -1) { %> child <% }%>
+      "
+      data-field="<%=fieldItem.field%>"
+    >
+      <button class='accessBtn' tabindex='0' aria-expanded='false'
+        <% if(allowedFields.indexOf(fieldItem.field) == -1) { %>
+        aria-describedby='variable-hint-<%=fieldItem.field.replace(/ /g, '-')%>'
+        <% }%>
+      >
+        <% if(allowedFields.indexOf(fieldItem.field) == -1) { %><h6><% } else { %><h5><% } %>
+          <span aria-hidden="true"><%=translations.t(fieldItem.label)%><i class="fa fa-chevron-down"></i></span>
+          <span class="sr-only">Show sub-categories: <%=translations.t(fieldItem.label)%></span>
+        <% if(allowedFields.indexOf(fieldItem.field) == -1) { %></h6><% } else { %></h5><% } %>
+      </button>
+      <div class="variable-options">
+        <fieldset>
+          <legend class="sr-only">Sub-categories - <%=translations.t(fieldItem.field)%></legend>
+          <div>
+            <button data-type="select">Select all</button>
+            <button data-type="clear">Clear all</button>
+          </div>
+          <% _.each(fieldItem.values, function(item) { %>
+            <label>
+              <input type="checkbox" <%=item.checked ? 'checked' : ''%> value="<%=item.value%>" data-field="<%=fieldItem.field%>" /><%=translations.t(item.value)%>
+            </label>
+          <% }); %>
+        </fieldset>
+      </div>
+
+      <% if(allowedFields.indexOf(fieldItem.field) == -1) { %>
+        <div class="variable-hint" id="variable-hint-<%=fieldItem.field.replace(/ /g, '-')%>">Available when '<%= translations.t(_.find(edges, { To: fieldItem.field }).From) %>' is selected
+        </div>
+        <div class="no-data-hint" id="no-data-hint-<%=fieldItem.field.replace(/ /g, '-')%>">
+          No options available because of filters above
+        </div>
+      <% }%>
+
+    </div>
+  <% }); %>
+</script>
+
+<script type="text/template" id="units_template">
+  
+  <% if(units.length > 1) { %>
+  
+    <h4>Unit of Measurement</h4>
+    <fieldset>
+      <legend class="sr-only">Unit of Measurement</legend>
+      <% _.each(units, function(unitsItem, index) { %>
+        <% var checked = (selectedUnit) ? (selectedUnit==unitsItem) : (index==0); %>
+        <label><input type="radio" name="unit" value="<%=unitsItem%>" tabindex=0 <%=checked ? 'checked' : ''%> /> <%=translations.t(unitsItem)%></label>
+      <% }); %>
+    </fieldset>
+  
+  <% } %>
+  
+</script>
+
+<script type="text/template" id="series_template">
+  
+  <% if(serieses.length > 1) { %>
+  
+    <h4>Series</h4>
+    <fieldset>
+      <legend class="sr-only">Series</legend>
+      <% _.each(serieses, function(seriesItem, index) { %>
+        <% var checked = (selectedSeries) ? (selectedSeries==seriesItem) : (index==0); %>
+        <label><input type="radio" name="series" value="<%=seriesItem%>" tabindex=0 <%=checked ? 'checked' : ''%> /> <%=translations.t(seriesItem)%></label>
+      <% }); %>
+    </fieldset>
+  
+  <% } %>
+  
+</script>
+
+<script>translations['indicator'] = {"annotation_2030_target":"2030 indicator target","annotation_series_break":"Series break","announce_data_added":"Chart and table updated to include data.","announce_data_not_available":"Chart and table shows no data.","announce_data_removed":"Chart and table updated to exclude data.","apply":"Apply","cancel":"Cancel","change_breakdowns":"Change breakdowns","chart":"Chart","chart_annotation":"Chart annotation","clear_all":"Clear all","clear_selections":"Clear selections","data_keyboard_navigation":"Press enter to browse data points with left and right arrow keys.","data_not_available":"This data is not available. Please choose alternative data to display.","data_tabular_alternative":"For tabular data alternative see Table tab.","dataset_size_warning":"There are too many datasets to show on the chart. Not all will be shown until you remove some selections.","download_chart":"Download chart data (.csv)","download_chart_image":"Download chart image (.png)","download_chart_image_title":"Download chart image as PNG","download_csv":"Download data (.csv)","download_csv_title":"Download data as CSV","download_geojson":"Download map data (.geojson)","download_geojson_title":"Download map data as GeoJSON","download_headline":"Download headline data (.csv)","download_headline_title":"Download headline data as CSV","download_source":"Download source data (.csv)","download_source_for_disaggregations":"Download source data for disaggregations (.csv)","download_source_sdmx":"Download source SDMX (.xml)","download_source_sdmx_title":"Download source data as SDMX","download_source_title":"Download source data as CSV","download_table":"Download table data (.csv)","edit":"Edit Indicator","edit_configuration":"Edit Configuration","edit_data":"Edit Data","edit_metadata":"Edit Metadata","empty_metadata_placeholder":"Not available for this indicator","empty_metadata_placeholder_sources":"Not available for this source","footnote":"Footnote","geographical_area":"Geographical Area","global_metadata":"Global Metadata","global_metadata_blurb":"This table provides information on metadata for SDG indicators as defined by the UN Statistical Commission. <a href=\"https://unstats.un.org/sdgs/metadata/\">Complete global metadata</a> is provided by the UN Statistics Division.","headline_data":"Headline data","legend_help":"Click on the legend to remove individual lines from the chart.","loading":"Loading","loading_map":"Loading map","map":"Map","map_fullscreen":"View map fullscreen","map_fullscreen_exit":"Exit fullscreen map","map_search":"Map search","map_search_cancel":"Clear map search","map_search_hide":"Hide map search","map_search_show":"Show map search","map_slider_back":"View map data for previous time period","map_slider_forward":"View map data for next time period","map_slider_keyboard":"View map data throughout time period by using left and right arrow keys","map_slider_mouse":"Navigate map data by time period","map_year_slider":"Year slider","map_zoom_home":"Reset to default map zoom","map_zoom_in":"Zoom in on map","map_zoom_out":"Zoom out on map","national_metadata":"National Metadata","national_metadata_blurb":"This table provides metadata for the actual indicator available from %country.name statistics closest to the corresponding global SDG indicator. Please note that even when the global SDG indicator is fully available from %country.adjective statistics, this table should be consulted for information on national methodology and other %country.adjective-specific metadata information.","next":"Next indicator","no_data_hint":"No options available because of filters above","no_headline_data":"No headline data available","plot_legend_description":"Plot legend: list of lines included in chart","previous":"Previous indicator","select_all":"Select all","series":"Series","series_help":"Choose categories from the dropdowns below to see different breakdowns of the data. Some will not be available until a higher level is chosen.","source":"Source","sources":"Sources","status":"Indicator status","sub_categories":"Sub-categories","sub_categories_show":"Show sub-categories:","table":"Table","table_column_sort":"Click to sort by this column","tags":"Tags","total":"Total","unit":"Unit","unit_of_measurement":"Unit of Measurement","units_type":"Units type","variable_hint":"Available when '%field' is selected","view_indicator_list":"View this goal's indicator list"};</script>
+
+<script>translations['data'] = {"Year":"Year"};</script>
+
+
+<div class="container">
+  
+<nav>
+    <ol aria-label="breadcrumb" class="breadcrumb" style="--bs-breadcrumb-divider: '&rsaquo;';">
+        
+        <li class="breadcrumb-item">
+            <a href="/en/">Home</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="/en/goals">Goals</a>
+        </li>
+        
+        <li class="breadcrumb-item">
+            <a href="/en/1"
+               title="Goal 1 - No poverty"
+               aria-label="Goal  - ">
+               Goal 1
+            </a>
+        </li>
+        
+    </ol>
+</nav>
+
+
+  
+</div>
+<div class="heading goal-banner indicator goal-1">
+    <div class="container">
+        <div class="row">
+            
+            <div class="col-4 col-md-3 col-lg-2 goal-icon goal-tiles">
+                <a href="/en/1" aria-label="View targets and indicators for Goal 1" title="View targets and indicators for Goal 1">
+                    <img src="https://open-sdg.org/sdg-translations/assets/img/goals/en/1.png"
+                        alt="No poverty - Goal 1"
+                        id="goal-1"
+                        class="goal-icon-image goal-icon-image-" />
+                </a>
+            </div>
+            <div class="col-8 col-md-9 col-lg-10 indicator-details">
+            
+                <div>
+                    <h1>
+                        
+                        Indicator 1.2.1.a1
+                        
+                        <span class="lead-copy">Proporción de la población que vive por debajo del umbral nacional de la pobreza, por desglose geográfico</span>
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="main-content" class="container goal-1" role="main">
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+
+<div class="row"
+  id="indicatorData"
+  data-indicatorid='indicator_1-2-1-a1'
+  data-id="1-2-1-a1"
+  data-country="México"
+  data-charttitle="Proporción de la población que vive por debajo del umbral nacional de la pobreza, por desglose geográfico"
+  data-charttitles="[]"
+  data-measurementunit="Defunciones de mujeres por cada 100 mil nacidos vivos"
+  data-xaxislabel=""
+  data-showdata="true"
+  data-graphtype="line"
+  data-graphtypes="null"
+  data-geocoderegex=""
+  data-showmap="true"
+  data-startvalues="[{&quot;field&quot;:&quot;Desglose_geográfico&quot;,&quot;value&quot;:&quot;Estados Unidos Mexicanos&quot;}]"
+  data-graphlimits="[]"
+  data-stackeddisaggregation=""
+  data-graphannotations="[]"
+  data-graphtargetlines="null"
+  data-graphseriesbreaks="null"
+  data-indicatordownloads="null"
+  data-dataschema="{&quot;fields&quot;:[{&quot;name&quot;:&quot;Year&quot;,&quot;type&quot;:&quot;integer&quot;,&quot;title&quot;:&quot;Year&quot;},{&quot;name&quot;:&quot;Desglose_geográfico&quot;,&quot;type&quot;:&quot;string&quot;,&quot;constraints&quot;:{&quot;enum&quot;:[&quot;Estados Unidos Mexicanos&quot;,&quot;Aguascalientes&quot;,&quot;Aguascalientes-Aguascalientes&quot;,&quot;Aguascalientes-Asientos&quot;,&quot;Aguascalientes-Calvillo&quot;,&quot;Aguascalientes-Cosío&quot;,&quot;Aguascalientes-Jesús María&quot;,&quot;Aguascalientes-Pabellón de Arteaga&quot;,&quot;Aguascalientes-Rincón de Romos&quot;,&quot;Aguascalientes-San José de Gracia&quot;,&quot;Aguascalientes-Tepezalá&quot;,&quot;Aguascalientes-El Llano&quot;,&quot;Aguascalientes-San Francisco de los Romo&quot;,&quot;Baja California&quot;,&quot;Baja California-Ensenada&quot;,&quot;Baja California-Mexicali&quot;,&quot;Baja California-Tecate&quot;,&quot;Baja California-Tijuana&quot;,&quot;Baja California-Playas de Rosarito&quot;,&quot;Baja California Sur&quot;,&quot;Baja California Sur-Comondú&quot;,&quot;Baja California Sur-Mulegé&quot;,&quot;Baja California Sur-La Paz&quot;,&quot;Baja California Sur-Los Cabos&quot;,&quot;Baja California Sur-Loreto&quot;,&quot;Campeche&quot;,&quot;Campeche-Calkiní&quot;,&quot;Campeche-Campeche&quot;,&quot;Campeche-Carmen&quot;,&quot;Campeche-Champotón&quot;,&quot;Campeche-Hecelchakán&quot;,&quot;Campeche-Hopelchén&quot;,&quot;Campeche-Palizada&quot;,&quot;Campeche-Tenabo&quot;,&quot;Campeche-Escárcega&quot;,&quot;Campeche-Calakmul&quot;,&quot;Campeche-Candelaria&quot;,&quot;Coahuila de Zaragoza&quot;,&quot;Coahuila de Zaragoza-Abasolo&quot;,&quot;Coahuila de Zaragoza-Acuña&quot;,&quot;Coahuila de Zaragoza-Allende&quot;,&quot;Coahuila de Zaragoza-Arteaga&quot;,&quot;Coahuila de Zaragoza-Candela&quot;,&quot;Coahuila de Zaragoza-Castaños&quot;,&quot;Coahuila de Zaragoza-Cuatro Ciénegas&quot;,&quot;Coahuila de Zaragoza-Escobedo&quot;,&quot;Coahuila de Zaragoza-Francisco I. Madero&quot;,&quot;Coahuila de Zaragoza-Frontera&quot;,&quot;Coahuila de Zaragoza-General Cepeda&quot;,&quot;Coahuila de Zaragoza-Guerrero&quot;,&quot;Coahuila de Zaragoza-Hidalgo&quot;,&quot;Coahuila de Zaragoza-Jiménez&quot;,&quot;Coahuila de Zaragoza-Juárez&quot;,&quot;Coahuila de Zaragoza-Lamadrid&quot;,&quot;Coahuila de Zaragoza-Matamoros&quot;,&quot;Coahuila de Zaragoza-Monclova&quot;,&quot;Coahuila de Zaragoza-Morelos&quot;,&quot;Coahuila de Zaragoza-Múzquiz&quot;,&quot;Coahuila de Zaragoza-Nadadores&quot;,&quot;Coahuila de Zaragoza-Nava&quot;,&quot;Coahuila de Zaragoza-Ocampo&quot;,&quot;Coahuila de Zaragoza-Parras&quot;,&quot;Coahuila de Zaragoza-Piedras Negras&quot;,&quot;Coahuila de Zaragoza-Progreso&quot;,&quot;Coahuila de Zaragoza-Ramos Arizpe&quot;,&quot;Coahuila de Zaragoza-Sabinas&quot;,&quot;Coahuila de Zaragoza-Sacramento&quot;,&quot;Coahuila de Zaragoza-Saltillo&quot;,&quot;Coahuila de Zaragoza-San Buenaventura&quot;,&quot;Coahuila de Zaragoza-San Juan de Sabinas&quot;,&quot;Coahuila de Zaragoza-San Pedro&quot;,&quot;Coahuila de Zaragoza-Sierra Mojada&quot;,&quot;Coahuila de Zaragoza-Torreón&quot;,&quot;Coahuila de Zaragoza-Viesca&quot;,&quot;Coahuila de Zaragoza-Villa Unión&quot;,&quot;Coahuila de Zaragoza-Zaragoza&quot;,&quot;Colima&quot;,&quot;Colima-Armería&quot;,&quot;Colima-Colima&quot;,&quot;Colima-Comala&quot;,&quot;Colima-Coquimatlán&quot;,&quot;Colima-Cuauhtémoc&quot;,&quot;Colima-Ixtlahuacán&quot;,&quot;Colima-Manzanillo&quot;,&quot;Colima-Minatitlán&quot;,&quot;Colima-Tecomán&quot;,&quot;Colima-Villa de Álvarez&quot;,&quot;Chiapas&quot;,&quot;Chiapas-Acacoyagua&quot;,&quot;Chiapas-Acala&quot;,&quot;Chiapas-Acapetahua&quot;,&quot;Chiapas-Altamirano&quot;,&quot;Chiapas-Amatán&quot;,&quot;Chiapas-Amatenango de la Frontera&quot;,&quot;Chiapas-Amatenango del Valle&quot;,&quot;Chiapas-Angel Albino Corzo&quot;,&quot;Chiapas-Arriaga&quot;,&quot;Chiapas-Bejucal de Ocampo&quot;,&quot;Chiapas-Bella Vista&quot;,&quot;Chiapas-Berriozábal&quot;,&quot;Chiapas-Bochil&quot;,&quot;Chiapas-El Bosque&quot;,&quot;Chiapas-Cacahoatán&quot;,&quot;Chiapas-Catazajá&quot;,&quot;Chiapas-Cintalapa&quot;,&quot;Chiapas-Coapilla&quot;,&quot;Chiapas-Comitán de Domínguez&quot;,&quot;Chiapas-La Concordia&quot;,&quot;Chiapas-Copainalá&quot;,&quot;Chiapas-Chalchihuitán&quot;,&quot;Chiapas-Chamula&quot;,&quot;Chiapas-Chanal&quot;,&quot;Chiapas-Chapultenango&quot;,&quot;Chiapas-Chenalhó&quot;,&quot;Chiapas-Chiapa de Corzo&quot;,&quot;Chiapas-Chiapilla&quot;,&quot;Chiapas-Chicoasén&quot;,&quot;Chiapas-Chicomuselo&quot;,&quot;Chiapas-Chilón&quot;,&quot;Chiapas-Escuintla&quot;,&quot;Chiapas-Francisco León&quot;,&quot;Chiapas-Frontera Comalapa&quot;,&quot;Chiapas-Frontera Hidalgo&quot;,&quot;Chiapas-La Grandeza&quot;,&quot;Chiapas-Huehuetán&quot;,&quot;Chiapas-Huixtán&quot;,&quot;Chiapas-Huitiupán&quot;,&quot;Chiapas-Huixtla&quot;,&quot;Chiapas-La Independencia&quot;,&quot;Chiapas-Ixhuatán&quot;,&quot;Chiapas-Ixtacomitán&quot;,&quot;Chiapas-Ixtapa&quot;,&quot;Chiapas-Ixtapangajoya&quot;,&quot;Chiapas-Jiquipilas&quot;,&quot;Chiapas-Jitotol&quot;,&quot;Chiapas-Juárez&quot;,&quot;Chiapas-Larráinzar&quot;,&quot;Chiapas-La Libertad&quot;,&quot;Chiapas-Mapastepec&quot;,&quot;Chiapas-Las Margaritas&quot;,&quot;Chiapas-Mazapa de Madero&quot;,&quot;Chiapas-Mazatán&quot;,&quot;Chiapas-Metapa&quot;,&quot;Chiapas-Mitontic&quot;,&quot;Chiapas-Motozintla&quot;,&quot;Chiapas-Nicolás Ruíz&quot;,&quot;Chiapas-Ocosingo&quot;,&quot;Chiapas-Ocotepec&quot;,&quot;Chiapas-Ocozocoautla de Espinosa&quot;,&quot;Chiapas-Ostuacán&quot;,&quot;Chiapas-Osumacinta&quot;,&quot;Chiapas-Oxchuc&quot;,&quot;Chiapas-Palenque&quot;,&quot;Chiapas-Pantelhó&quot;,&quot;Chiapas-Pantepec&quot;,&quot;Chiapas-Pichucalco&quot;,&quot;Chiapas-Pijijiapan&quot;,&quot;Chiapas-El Porvenir&quot;,&quot;Chiapas-Villa Comaltitlán&quot;,&quot;Chiapas-Pueblo Nuevo Solistahuacán&quot;,&quot;Chiapas-Rayón&quot;,&quot;Chiapas-Reforma&quot;,&quot;Chiapas-Las Rosas&quot;,&quot;Chiapas-Sabanilla&quot;,&quot;Chiapas-Salto de Agua&quot;,&quot;Chiapas-San Cristóbal de las Casas&quot;,&quot;Chiapas-San Fernando&quot;,&quot;Chiapas-Siltepec&quot;,&quot;Chiapas-Simojovel&quot;,&quot;Chiapas-Sitalá&quot;,&quot;Chiapas-Socoltenango&quot;,&quot;Chiapas-Solosuchiapa&quot;,&quot;Chiapas-Soyaló&quot;,&quot;Chiapas-Suchiapa&quot;,&quot;Chiapas-Suchiate&quot;,&quot;Chiapas-Sunuapa&quot;,&quot;Chiapas-Tapachula&quot;,&quot;Chiapas-Tapalapa&quot;,&quot;Chiapas-Tapilula&quot;,&quot;Chiapas-Tecpatán&quot;,&quot;Chiapas-Tenejapa&quot;,&quot;Chiapas-Teopisca&quot;,&quot;Chiapas-Tila&quot;,&quot;Chiapas-Tonalá&quot;,&quot;Chiapas-Totolapa&quot;,&quot;Chiapas-La Trinitaria&quot;,&quot;Chiapas-Tumbalá&quot;,&quot;Chiapas-Tuxtla Gutiérrez&quot;,&quot;Chiapas-Tuxtla Chico&quot;,&quot;Chiapas-Tuzantán&quot;,&quot;Chiapas-Tzimol&quot;,&quot;Chiapas-Unión Juárez&quot;,&quot;Chiapas-Venustiano Carranza&quot;,&quot;Chiapas-Villa Corzo&quot;,&quot;Chiapas-Villaflores&quot;,&quot;Chiapas-Yajalón&quot;,&quot;Chiapas-San Lucas&quot;,&quot;Chiapas-Zinacantán&quot;,&quot;Chiapas-San Juan Cancuc&quot;,&quot;Chiapas-Aldama&quot;,&quot;Chiapas-Benemérito de las Américas&quot;,&quot;Chiapas-Maravilla Tenejapa&quot;,&quot;Chiapas-Marqués de Comillas&quot;,&quot;Chiapas-Montecristo de Guerrero&quot;,&quot;Chiapas-San Andrés Duraznal&quot;,&quot;Chiapas-Santiago el Pinar&quot;,&quot;Chihuahua&quot;,&quot;Chihuahua-Ahumada&quot;,&quot;Chihuahua-Aldama&quot;,&quot;Chihuahua-Allende&quot;,&quot;Chihuahua-Aquiles Serdán&quot;,&quot;Chihuahua-Ascensión&quot;,&quot;Chihuahua-Bachíniva&quot;,&quot;Chihuahua-Balleza&quot;,&quot;Chihuahua-Batopilas&quot;,&quot;Chihuahua-Bocoyna&quot;,&quot;Chihuahua-Buenaventura&quot;,&quot;Chihuahua-Camargo&quot;,&quot;Chihuahua-Carichí&quot;,&quot;Chihuahua-Casas Grandes&quot;,&quot;Chihuahua-Coronado&quot;,&quot;Chihuahua-Coyame del Sotol&quot;,&quot;Chihuahua-La Cruz&quot;,&quot;Chihuahua-Cuauhtémoc&quot;,&quot;Chihuahua-Cusihuiriachi&quot;,&quot;Chihuahua-Chihuahua&quot;,&quot;Chihuahua-Chínipas&quot;,&quot;Chihuahua-Delicias&quot;,&quot;Chihuahua-Dr. Belisario Domínguez&quot;,&quot;Chihuahua-Galeana&quot;,&quot;Chihuahua-Santa Isabel&quot;,&quot;Chihuahua-Gómez Farías&quot;,&quot;Chihuahua-Gran Morelos&quot;,&quot;Chihuahua-Guachochi&quot;,&quot;Chihuahua-Guadalupe&quot;,&quot;Chihuahua-Guadalupe y Calvo&quot;,&quot;Chihuahua-Guazapares&quot;,&quot;Chihuahua-Guerrero&quot;,&quot;Chihuahua-Hidalgo del Parral&quot;,&quot;Chihuahua-Huejotitán&quot;,&quot;Chihuahua-Ignacio Zaragoza&quot;,&quot;Chihuahua-Janos&quot;,&quot;Chihuahua-Jiménez&quot;,&quot;Chihuahua-Juárez&quot;,&quot;Chihuahua-Julimes&quot;,&quot;Chihuahua-López&quot;,&quot;Chihuahua-Madera&quot;,&quot;Chihuahua-Maguarichi&quot;,&quot;Chihuahua-Manuel Benavides&quot;,&quot;Chihuahua-Matachí&quot;,&quot;Chihuahua-Matamoros&quot;,&quot;Chihuahua-Meoqui&quot;,&quot;Chihuahua-Morelos&quot;,&quot;Chihuahua-Moris&quot;,&quot;Chihuahua-Namiquipa&quot;,&quot;Chihuahua-Nonoava&quot;,&quot;Chihuahua-Nuevo Casas Grandes&quot;,&quot;Chihuahua-Ocampo&quot;,&quot;Chihuahua-Ojinaga&quot;,&quot;Chihuahua-Praxedis G. Guerrero&quot;,&quot;Chihuahua-Riva Palacio&quot;,&quot;Chihuahua-Rosales&quot;,&quot;Chihuahua-Rosario&quot;,&quot;Chihuahua-San Francisco de Borja&quot;,&quot;Chihuahua-San Francisco de Conchos&quot;,&quot;Chihuahua-San Francisco del Oro&quot;,&quot;Chihuahua-Santa Bárbara&quot;,&quot;Chihuahua-Satevó&quot;,&quot;Chihuahua-Saucillo&quot;,&quot;Chihuahua-Temósachic&quot;,&quot;Chihuahua-El Tule&quot;,&quot;Chihuahua-Urique&quot;,&quot;Chihuahua-Uruachi&quot;,&quot;Chihuahua-Valle de Zaragoza&quot;,&quot;Ciudad de México&quot;,&quot;Ciudad de México-Azcapotzalco&quot;,&quot;Ciudad de México-Coyoacán&quot;,&quot;Ciudad de México-Cuajimalpa de Morelos&quot;,&quot;Ciudad de México-Gustavo A. Madero&quot;,&quot;Ciudad de México-Iztacalco&quot;,&quot;Ciudad de México-Iztapalapa&quot;,&quot;Ciudad de México-La Magdalena Contreras&quot;,&quot;Ciudad de México-Milpa Alta&quot;,&quot;Ciudad de México-Álvaro Obregón&quot;,&quot;Ciudad de México-Tláhuac&quot;,&quot;Ciudad de México-Tlalpan&quot;,&quot;Ciudad de México-Xochimilco&quot;,&quot;Ciudad de México-Benito Juárez&quot;,&quot;Ciudad de México-Cuauhtémoc&quot;,&quot;Ciudad de México-Miguel Hidalgo&quot;,&quot;Ciudad de México-Venustiano Carranza&quot;,&quot;Durango&quot;,&quot;Durago-Canatlán&quot;,&quot;Durago-Canelas&quot;,&quot;Durago-Coneto de Comonfort&quot;,&quot;Durago-Cuencamé&quot;,&quot;Durago-Durango&quot;,&quot;Durago-General Simón Bolívar&quot;,&quot;Durago-Gómez Palacio&quot;,&quot;Durago-Guadalupe Victoria&quot;,&quot;Durago-Guanaceví&quot;,&quot;Durago-Hidalgo&quot;,&quot;Durago-Indé&quot;,&quot;Durago-Lerdo&quot;,&quot;Durago-Mapimí&quot;,&quot;Durago-Mezquital&quot;,&quot;Durago-Nazas&quot;,&quot;Durago-Nombre de Dios&quot;,&quot;Durago-Ocampo&quot;,&quot;Durago-El Oro&quot;,&quot;Durago-Otáez&quot;,&quot;Durago-Pánuco de Coronado&quot;,&quot;Durago-Peñón Blanco&quot;,&quot;Durago-Poanas&quot;,&quot;Durago-Pueblo Nuevo&quot;,&quot;Durago-Rodeo&quot;,&quot;Durago-San Bernardo&quot;,&quot;Durago-San Dimas&quot;,&quot;Durago-San Juan de Guadalupe&quot;,&quot;Durago-San Juan del Río&quot;,&quot;Durago-San Luis del Cordero&quot;,&quot;Durago-San Pedro del Gallo&quot;,&quot;Durago-Santa Clara&quot;,&quot;Durago-Santiago Papasquiaro&quot;,&quot;Durago-Súchil&quot;,&quot;Durago-Tamazula&quot;,&quot;Durago-Tepehuanes&quot;,&quot;Durago-Tlahualilo&quot;,&quot;Durago-Topia&quot;,&quot;Durago-Vicente Guerrero&quot;,&quot;Durago-Nuevo Ideal&quot;,&quot;Guanajuato&quot;,&quot;Guanajuato-Abasolo&quot;,&quot;Guanajuato-Acámbaro&quot;,&quot;Guanajuato-San Miguel de Allende&quot;,&quot;Guanajuato-Apaseo el Alto&quot;,&quot;Guanajuato-Apaseo el Grande&quot;,&quot;Guanajuato-Atarjea&quot;,&quot;Guanajuato-Celaya&quot;,&quot;Guanajuato-Manuel Doblado&quot;,&quot;Guanajuato-Comonfort&quot;,&quot;Guanajuato-Coroneo&quot;,&quot;Guanajuato-Cortazar&quot;,&quot;Guanajuato-Cuerámaro&quot;,&quot;Guanajuato-Doctor Mora&quot;,&quot;Guanajuato-Dolores Hidalgo Cuna de la Independencia Nacional&quot;,&quot;Guanajuato-Guanajuato&quot;,&quot;Guanajuato-Huanímaro&quot;,&quot;Guanajuato-Irapuato&quot;,&quot;Guanajuato-Jaral del Progreso&quot;,&quot;Guanajuato-Jerécuaro&quot;,&quot;Guanajuato-León&quot;,&quot;Guanajuato-Moroleón&quot;,&quot;Guanajuato-Ocampo&quot;,&quot;Guanajuato-Pénjamo&quot;,&quot;Guanajuato-Pueblo Nuevo&quot;,&quot;Guanajuato-Purísima del Rincón&quot;,&quot;Guanajuato-Romita&quot;,&quot;Guanajuato-Salamanca&quot;,&quot;Guanajuato-Salvatierra&quot;,&quot;Guanajuato-San Diego de la Unión&quot;,&quot;Guanajuato-San Felipe&quot;,&quot;Guanajuato-San Francisco del Rincón&quot;,&quot;Guanajuato-San José Iturbide&quot;,&quot;Guanajuato-San Luis de la Paz&quot;,&quot;Guanajuato-Santa Catarina&quot;,&quot;Guanajuato-Santa Cruz de Juventino Rosas&quot;,&quot;Guanajuato-Santiago Maravatío&quot;,&quot;Guanajuato-Silao de la Victoria&quot;,&quot;Guanajuato-Tarandacuao&quot;,&quot;Guanajuato-Tarimoro&quot;,&quot;Guanajuato-Tierra Blanca&quot;,&quot;Guanajuato-Uriangato&quot;,&quot;Guanajuato-Valle de Santiago&quot;,&quot;Guanajuato-Victoria&quot;,&quot;Guanajuato-Villagrán&quot;,&quot;Guanajuato-Xichú&quot;,&quot;Guanajuato-Yuriria&quot;,&quot;Guerrero&quot;,&quot;Guerrero-Acapulco de Juárez&quot;,&quot;Guerrero-Ahuacuotzingo&quot;,&quot;Guerrero-Ajuchitlán del Progreso&quot;,&quot;Guerrero-Alcozauca de Guerrero&quot;,&quot;Guerrero-Alpoyeca&quot;,&quot;Guerrero-Apaxtla&quot;,&quot;Guerrero-Arcelia&quot;,&quot;Guerrero-Atenango del Río&quot;,&quot;Guerrero-Atlamajalcingo del Monte&quot;,&quot;Guerrero-Atlixtac&quot;,&quot;Guerrero-Atoyac de Álvarez&quot;,&quot;Guerrero-Ayutla de los Libres&quot;,&quot;Guerrero-Azoyú&quot;,&quot;Guerrero-Benito Juárez&quot;,&quot;Guerrero-Buenavista de Cuéllar&quot;,&quot;Guerrero-Coahuayutla de José María Izazaga&quot;,&quot;Guerrero-Cocula&quot;,&quot;Guerrero-Copala&quot;,&quot;Guerrero-Copalillo&quot;,&quot;Guerrero-Copanatoyac&quot;,&quot;Guerrero-Coyuca de Benítez&quot;,&quot;Guerrero-Coyuca de Catalán&quot;,&quot;Guerrero-Cuajinicuilapa&quot;,&quot;Guerrero-Cualác&quot;,&quot;Guerrero-Cuautepec&quot;,&quot;Guerrero-Cuetzala del Progreso&quot;,&quot;Guerrero-Cutzamala de Pinzón&quot;,&quot;Guerrero-Chilapa de Álvarez&quot;,&quot;Guerrero-Chilpancingo de los Bravo&quot;,&quot;Guerrero-Florencio Villarreal&quot;,&quot;Guerrero-General Canuto A. Neri&quot;,&quot;Guerrero-General Heliodoro Castillo&quot;,&quot;Guerrero-Huamuxtitlán&quot;,&quot;Guerrero-Huitzuco de los Figueroa&quot;,&quot;Guerrero-Iguala de la Independencia&quot;,&quot;Guerrero-Igualapa&quot;,&quot;Guerrero-Ixcateopan de Cuauhtémoc&quot;,&quot;Guerrero-Zihuatanejo de Azueta&quot;,&quot;Guerrero-Juan R. Escudero&quot;,&quot;Guerrero-Leonardo Bravo&quot;,&quot;Guerrero-Malinaltepec&quot;,&quot;Guerrero-Mártir de Cuilapan&quot;,&quot;Guerrero-Metlatónoc&quot;,&quot;Guerrero-Mochitlán&quot;,&quot;Guerrero-Olinalá&quot;,&quot;Guerrero-Ometepec&quot;,&quot;Guerrero-Pedro Ascencio Alquisiras&quot;,&quot;Guerrero-Petatlán&quot;,&quot;Guerrero-Pilcaya&quot;,&quot;Guerrero-Pungarabato&quot;,&quot;Guerrero-Quechultenango&quot;,&quot;Guerrero-San Luis Acatlán&quot;,&quot;Guerrero-San Marcos&quot;,&quot;Guerrero-San Miguel Totolapan&quot;,&quot;Guerrero-Taxco de Alarcón&quot;,&quot;Guerrero-Tecoanapa&quot;,&quot;Guerrero-Técpan de Galeana&quot;,&quot;Guerrero-Teloloapan&quot;,&quot;Guerrero-Tepecoacuilco de Trujano&quot;,&quot;Guerrero-Tetipac&quot;,&quot;Guerrero-Tixtla de Guerrero&quot;,&quot;Guerrero-Tlacoachistlahuaca&quot;,&quot;Guerrero-Tlacoapa&quot;,&quot;Guerrero-Tlalchapa&quot;,&quot;Guerrero-Tlalixtaquilla de Maldonado&quot;,&quot;Guerrero-Tlapa de Comonfort&quot;,&quot;Guerrero-Tlapehuala&quot;,&quot;Guerrero-La Unión de Isidoro Montes de Oca&quot;,&quot;Guerrero-Xalpatláhuac&quot;,&quot;Guerrero-Xochihuehuetlán&quot;,&quot;Guerrero-Xochistlahuaca&quot;,&quot;Guerrero-Zapotitlán Tablas&quot;,&quot;Guerrero-Zirándaro&quot;,&quot;Guerrero-Zitlala&quot;,&quot;Guerrero-Eduardo Neri&quot;,&quot;Guerrero-Acatepec&quot;,&quot;Guerrero-Marquelia&quot;,&quot;Guerrero-Cochoapa el Grande&quot;,&quot;Guerrero-José Joaquín de Herrera&quot;,&quot;Guerrero-Juchitán&quot;,&quot;Guerrero-Iliatenco&quot;,&quot;Hidalgo&quot;,&quot;Hidalgo-Acatlán&quot;,&quot;Hidalgo-Acaxochitlán&quot;,&quot;Hidalgo-Actopan&quot;,&quot;Hidalgo-Agua Blanca de Iturbide&quot;,&quot;Hidalgo-Ajacuba&quot;,&quot;Hidalgo-Alfajayucan&quot;,&quot;Hidalgo-Almoloya&quot;,&quot;Hidalgo-Apan&quot;,&quot;Hidalgo-El Arenal&quot;,&quot;Hidalgo-Atitalaquia&quot;,&quot;Hidalgo-Atlapexco&quot;,&quot;Hidalgo-Atotonilco el Grande&quot;,&quot;Hidalgo-Atotonilco de Tula&quot;,&quot;Hidalgo-Calnali&quot;,&quot;Hidalgo-Cardonal&quot;,&quot;Hidalgo-Cuautepec de Hinojosa&quot;,&quot;Hidalgo-Chapantongo&quot;,&quot;Hidalgo-Chapulhuacán&quot;,&quot;Hidalgo-Chilcuautla&quot;,&quot;Hidalgo-Eloxochitlán&quot;,&quot;Hidalgo-Emiliano Zapata&quot;,&quot;Hidalgo-Epazoyucan&quot;,&quot;Hidalgo-Francisco I. Madero&quot;,&quot;Hidalgo-Huasca de Ocampo&quot;,&quot;Hidalgo-Huautla&quot;,&quot;Hidalgo-Huazalingo&quot;,&quot;Hidalgo-Huehuetla&quot;,&quot;Hidalgo-Huejutla de Reyes&quot;,&quot;Hidalgo-Huichapan&quot;,&quot;Hidalgo-Ixmiquilpan&quot;,&quot;Hidalgo-Jacala de Ledezma&quot;,&quot;Hidalgo-Jaltocán&quot;,&quot;Hidalgo-Juárez Hidalgo&quot;,&quot;Hidalgo-Lolotla&quot;,&quot;Hidalgo-Metepec&quot;,&quot;Hidalgo-San Agustín Metzquititlán&quot;,&quot;Hidalgo-Metztitlán&quot;,&quot;Hidalgo-Mineral del Chico&quot;,&quot;Hidalgo-Mineral del Monte&quot;,&quot;Hidalgo-La Misión&quot;,&quot;Hidalgo-Mixquiahuala de Juárez&quot;,&quot;Hidalgo-Molango de Escamilla&quot;,&quot;Hidalgo-Nicolás Flores&quot;,&quot;Hidalgo-Nopala de Villagrán&quot;,&quot;Hidalgo-Omitlán de Juárez&quot;,&quot;Hidalgo-San Felipe Orizatlán&quot;,&quot;Hidalgo-Pacula&quot;,&quot;Hidalgo-Pachuca de Soto&quot;,&quot;Hidalgo-Pisaflores&quot;,&quot;Hidalgo-Progreso de Obregón&quot;,&quot;Hidalgo-Mineral de la Reforma&quot;,&quot;Hidalgo-San Agustín Tlaxiaca&quot;,&quot;Hidalgo-San Bartolo Tutotepec&quot;,&quot;Hidalgo-San Salvador&quot;,&quot;Hidalgo-Santiago de Anaya&quot;,&quot;Hidalgo-Santiago Tulantepec de Lugo Guerrero&quot;,&quot;Hidalgo-Singuilucan&quot;,&quot;Hidalgo-Tasquillo&quot;,&quot;Hidalgo-Tecozautla&quot;,&quot;Hidalgo-Tenango de Doria&quot;,&quot;Hidalgo-Tepeapulco&quot;,&quot;Hidalgo-Tepehuacán de Guerrero&quot;,&quot;Hidalgo-Tepeji del Río de Ocampo&quot;,&quot;Hidalgo-Tepetitlán&quot;,&quot;Hidalgo-Tetepango&quot;,&quot;Hidalgo-Villa de Tezontepec&quot;,&quot;Hidalgo-Tezontepec de Aldama&quot;,&quot;Hidalgo-Tianguistengo&quot;,&quot;Hidalgo-Tizayuca&quot;,&quot;Hidalgo-Tlahuelilpan&quot;,&quot;Hidalgo-Tlahuiltepa&quot;,&quot;Hidalgo-Tlanalapa&quot;,&quot;Hidalgo-Tlanchinol&quot;,&quot;Hidalgo-Tlaxcoapan&quot;,&quot;Hidalgo-Tolcayuca&quot;,&quot;Hidalgo-Tula de Allende&quot;,&quot;Hidalgo-Tulancingo de Bravo&quot;,&quot;Hidalgo-Xochiatipan&quot;,&quot;Hidalgo-Xochicoatlán&quot;,&quot;Hidalgo-Yahualica&quot;,&quot;Hidalgo-Zacualtipán de Ángeles&quot;,&quot;Hidalgo-Zapotlán de Juárez&quot;,&quot;Hidalgo-Zempoala&quot;,&quot;Hidalgo-Zimapán&quot;,&quot;Jalisco&quot;,&quot;Jalisco-Acatic&quot;,&quot;Jalisco-Acatlán de Juárez&quot;,&quot;Jalisco-Ahualulco de Mercado&quot;,&quot;Jalisco-Amacueca&quot;,&quot;Jalisco-Amatitán&quot;,&quot;Jalisco-Ameca&quot;,&quot;Jalisco-San Juanito de Escobedo&quot;,&quot;Jalisco-Arandas&quot;,&quot;Jalisco-El Arenal&quot;,&quot;Jalisco-Atemajac de Brizuela&quot;,&quot;Jalisco-Atengo&quot;,&quot;Jalisco-Atenguillo&quot;,&quot;Jalisco-Atotonilco el Alto&quot;,&quot;Jalisco-Atoyac&quot;,&quot;Jalisco-Autlán de Navarro&quot;,&quot;Jalisco-Ayotlán&quot;,&quot;Jalisco-Ayutla&quot;,&quot;Jalisco-La Barca&quot;,&quot;Jalisco-Bolaños&quot;,&quot;Jalisco-Cabo Corrientes&quot;,&quot;Jalisco-Casimiro Castillo&quot;,&quot;Jalisco-Cihuatlán&quot;,&quot;Jalisco-Zapotlán el Grande&quot;,&quot;Jalisco-Cocula&quot;,&quot;Jalisco-Colotlán&quot;,&quot;Jalisco-Concepción de Buenos Aires&quot;,&quot;Jalisco-Cuautitlán de García Barragán&quot;,&quot;Jalisco-Cuautla&quot;,&quot;Jalisco-Cuquío&quot;,&quot;Jalisco-Chapala&quot;,&quot;Jalisco-Chimaltitán&quot;,&quot;Jalisco-Chiquilistlán&quot;,&quot;Jalisco-Degollado&quot;,&quot;Jalisco-Ejutla&quot;,&quot;Jalisco-Encarnación de Díaz&quot;,&quot;Jalisco-Etzatlán&quot;,&quot;Jalisco-El Grullo&quot;,&quot;Jalisco-Guachinango&quot;,&quot;Jalisco-Guadalajara&quot;,&quot;Jalisco-Hostotipaquillo&quot;,&quot;Jalisco-Huejúcar&quot;,&quot;Jalisco-Huejuquilla el Alto&quot;,&quot;Jalisco-La Huerta&quot;,&quot;Jalisco-Ixtlahuacán de los Membrillos&quot;,&quot;Jalisco-Ixtlahuacán del Río&quot;,&quot;Jalisco-Jalostotitlán&quot;,&quot;Jalisco-Jamay&quot;,&quot;Jalisco-Jesús María&quot;,&quot;Jalisco-Jilotlán de los Dolores&quot;,&quot;Jalisco-Jocotepec&quot;,&quot;Jalisco-Juanacatlán&quot;,&quot;Jalisco-Juchitlán&quot;,&quot;Jalisco-Lagos de Moreno&quot;,&quot;Jalisco-El Limón&quot;,&quot;Jalisco-Magdalena&quot;,&quot;Jalisco-Santa María del Oro&quot;,&quot;Jalisco-La Manzanilla de la Paz&quot;,&quot;Jalisco-Mascota&quot;,&quot;Jalisco-Mazamitla&quot;,&quot;Jalisco-Mexticacán&quot;,&quot;Jalisco-Mezquitic&quot;,&quot;Jalisco-Mixtlán&quot;,&quot;Jalisco-Ocotlán&quot;,&quot;Jalisco-Ojuelos de Jalisco&quot;,&quot;Jalisco-Pihuamo&quot;,&quot;Jalisco-Poncitlán&quot;,&quot;Jalisco-Puerto Vallarta&quot;,&quot;Jalisco-Villa Purificación&quot;,&quot;Jalisco-Quitupan&quot;,&quot;Jalisco-El Salto&quot;,&quot;Jalisco-San Cristóbal de la Barranca&quot;,&quot;Jalisco-San Diego de Alejandría&quot;,&quot;Jalisco-San Juan de los Lagos&quot;,&quot;Jalisco-San Julián&quot;,&quot;Jalisco-San Marcos&quot;,&quot;Jalisco-San Martín de Bolaños&quot;,&quot;Jalisco-San Martín Hidalgo&quot;,&quot;Jalisco-San Miguel el Alto&quot;,&quot;Jalisco-Gómez Farías&quot;,&quot;Jalisco-San Sebastián del Oeste&quot;,&quot;Jalisco-Santa María de los Ángeles&quot;,&quot;Jalisco-Sayula&quot;,&quot;Jalisco-Tala&quot;,&quot;Jalisco-Talpa de Allende&quot;,&quot;Jalisco-Tamazula de Gordiano&quot;,&quot;Jalisco-Tapalpa&quot;,&quot;Jalisco-Tecalitlán&quot;,&quot;Jalisco-Tecolotlán&quot;,&quot;Jalisco-Techaluta de Montenegro&quot;,&quot;Jalisco-Tenamaxtlán&quot;,&quot;Jalisco-Teocaltiche&quot;,&quot;Jalisco-Teocuitatlán de Corona&quot;,&quot;Jalisco-Tepatitlán de Morelos&quot;,&quot;Jalisco-Tequila&quot;,&quot;Jalisco-Teuchitlán&quot;,&quot;Jalisco-Tizapán el Alto&quot;,&quot;Jalisco-Tlajomulco de Zúñiga&quot;,&quot;Jalisco-San Pedro Tlaquepaque&quot;,&quot;Jalisco-Tolimán&quot;,&quot;Jalisco-Tomatlán&quot;,&quot;Jalisco-Tonalá&quot;,&quot;Jalisco-Tonaya&quot;,&quot;Jalisco-Tonila&quot;,&quot;Jalisco-Totatiche&quot;,&quot;Jalisco-Tototlán&quot;,&quot;Jalisco-Tuxcacuesco&quot;,&quot;Jalisco-Tuxcueca&quot;,&quot;Jalisco-Tuxpan&quot;,&quot;Jalisco-Unión de San Antonio&quot;,&quot;Jalisco-Unión de Tula&quot;,&quot;Jalisco-Valle de Guadalupe&quot;,&quot;Jalisco-Valle de Juárez&quot;,&quot;Jalisco-San Gabriel&quot;,&quot;Jalisco-Villa Corona&quot;,&quot;Jalisco-Villa Guerrero&quot;,&quot;Jalisco-Villa Hidalgo&quot;,&quot;Jalisco-Cañadas de Obregón&quot;,&quot;Jalisco-Yahualica de González Gallo&quot;,&quot;Jalisco-Zacoalco de Torres&quot;,&quot;Jalisco-Zapopan&quot;,&quot;Jalisco-Zapotiltic&quot;,&quot;Jalisco-Zapotitlán de Vadillo&quot;,&quot;Jalisco-Zapotlán del Rey&quot;,&quot;Jalisco-Zapotlanejo&quot;,&quot;Jalisco-San Ignacio Cerro Gordo&quot;,&quot;México&quot;,&quot;México-Acambay de Ruíz Castañeda&quot;,&quot;México-Acolman&quot;,&quot;México-Aculco&quot;,&quot;México-Almoloya de Alquisiras&quot;,&quot;México-Almoloya de Juárez&quot;,&quot;México-Almoloya del Río&quot;,&quot;México-Amanalco&quot;,&quot;México-Amatepec&quot;,&quot;México-Amecameca&quot;,&quot;México-Apaxco&quot;,&quot;México-Atenco&quot;,&quot;México-Atizapán&quot;,&quot;México-Atizapán de Zaragoza&quot;,&quot;México-Atlacomulco&quot;,&quot;México-Atlautla&quot;,&quot;México-Axapusco&quot;,&quot;México-Ayapango&quot;,&quot;México-Calimaya&quot;,&quot;México-Capulhuac&quot;,&quot;México-Coacalco de Berriozábal&quot;,&quot;México-Coatepec Harinas&quot;,&quot;México-Cocotitlán&quot;,&quot;México-Coyotepec&quot;,&quot;México-Cuautitlán&quot;,&quot;México-Chalco&quot;,&quot;México-Chapa de Mota&quot;,&quot;México-Chapultepec&quot;,&quot;México-Chiautla&quot;,&quot;México-Chicoloapan&quot;,&quot;México-Chiconcuac&quot;,&quot;México-Chimalhuacán&quot;,&quot;México-Donato Guerra&quot;,&quot;México-Ecatepec de Morelos&quot;,&quot;México-Ecatzingo&quot;,&quot;México-Huehuetoca&quot;,&quot;México-Hueypoxtla&quot;,&quot;México-Huixquilucan&quot;,&quot;México-Isidro Fabela&quot;,&quot;México-Ixtapaluca&quot;,&quot;México-Ixtapan de la Sal&quot;,&quot;México-Ixtapan del Oro&quot;,&quot;México-Ixtlahuaca&quot;,&quot;México-Xalatlaco&quot;,&quot;México-Jaltenco&quot;,&quot;México-Jilotepec&quot;,&quot;México-Jilotzingo&quot;,&quot;México-Jiquipilco&quot;,&quot;México-Jocotitlán&quot;,&quot;México-Joquicingo&quot;,&quot;México-Juchitepec&quot;,&quot;México-Lerma&quot;,&quot;México-Malinalco&quot;,&quot;México-Melchor Ocampo&quot;,&quot;México-Metepec&quot;,&quot;México-Mexicaltzingo&quot;,&quot;México-Morelos&quot;,&quot;México-Naucalpan de Juárez&quot;,&quot;México-Nezahualcóyotl&quot;,&quot;México-Nextlalpan&quot;,&quot;México-Nicolás Romero&quot;,&quot;México-Nopaltepec&quot;,&quot;México-Ocoyoacac&quot;,&quot;México-Ocuilan&quot;,&quot;México-El Oro&quot;,&quot;México-Otumba&quot;,&quot;México-Otzoloapan&quot;,&quot;México-Otzolotepec&quot;,&quot;México-Ozumba&quot;,&quot;México-Papalotla&quot;,&quot;México-La Paz&quot;,&quot;México-Polotitlán&quot;,&quot;México-Rayón&quot;,&quot;México-San Antonio la Isla&quot;,&quot;México-San Felipe del Progreso&quot;,&quot;México-San Martín de las Pirámides&quot;,&quot;México-San Mateo Atenco&quot;,&quot;México-San Simón de Guerrero&quot;,&quot;México-Santo Tomás&quot;,&quot;México-Soyaniquilpan de Juárez&quot;,&quot;México-Sultepec&quot;,&quot;México-Tecámac&quot;,&quot;México-Tejupilco&quot;,&quot;México-Temamatla&quot;,&quot;México-Temascalapa&quot;,&quot;México-Temascalcingo&quot;,&quot;México-Temascaltepec&quot;,&quot;México-Temoaya&quot;,&quot;México-Tenancingo&quot;,&quot;México-Tenango del Aire&quot;,&quot;México-Tenango del Valle&quot;,&quot;México-Teoloyucan&quot;,&quot;México-Teotihuacán&quot;,&quot;México-Tepetlaoxtoc&quot;,&quot;México-Tepetlixpa&quot;,&quot;México-Tepotzotlán&quot;,&quot;México-Tequixquiac&quot;,&quot;México-Texcaltitlán&quot;,&quot;México-Texcalyacac&quot;,&quot;México-Texcoco&quot;,&quot;México-Tezoyuca&quot;,&quot;México-Tianguistenco&quot;,&quot;México-Timilpan&quot;,&quot;México-Tlalmanalco&quot;,&quot;México-Tlalnepantla de Baz&quot;,&quot;México-Tlatlaya&quot;,&quot;México-Toluca&quot;,&quot;México-Tonatico&quot;,&quot;México-Tultepec&quot;,&quot;México-Tultitlán&quot;,&quot;México-Valle de Bravo&quot;,&quot;México-Villa de Allende&quot;,&quot;México-Villa del Carbón&quot;,&quot;México-Villa Guerrero&quot;,&quot;México-Villa Victoria&quot;,&quot;México-Xonacatlán&quot;,&quot;México-Zacazonapan&quot;,&quot;México-Zacualpan&quot;,&quot;México-Zinacantepec&quot;,&quot;México-Zumpahuacán&quot;,&quot;México-Zumpango&quot;,&quot;México-Cuautitlán Izcalli&quot;,&quot;México-Valle de Chalco Solidaridad&quot;,&quot;México-Luvianos&quot;,&quot;México-San José del Rincón&quot;,&quot;México-Tonanitla&quot;,&quot;Michoacán de Ocampo&quot;,&quot;Michoacán de Ocampo-Acuitzio&quot;,&quot;Michoacán de Ocampo-Aguililla&quot;,&quot;Michoacán de Ocampo-Álvaro Obregón&quot;,&quot;Michoacán de Ocampo-Angamacutiro&quot;,&quot;Michoacán de Ocampo-Angangueo&quot;,&quot;Michoacán de Ocampo-Apatzingán&quot;,&quot;Michoacán de Ocampo-Aporo&quot;,&quot;Michoacán de Ocampo-Aquila&quot;,&quot;Michoacán de Ocampo-Ario&quot;,&quot;Michoacán de Ocampo-Arteaga&quot;,&quot;Michoacán de Ocampo-Briseñas&quot;,&quot;Michoacán de Ocampo-Buenavista&quot;,&quot;Michoacán de Ocampo-Carácuaro&quot;,&quot;Michoacán de Ocampo-Coahuayana&quot;,&quot;Michoacán de Ocampo-Coalcomán de Vázquez Pallares&quot;,&quot;Michoacán de Ocampo-Coeneo&quot;,&quot;Michoacán de Ocampo-Contepec&quot;,&quot;Michoacán de Ocampo-Copándaro&quot;,&quot;Michoacán de Ocampo-Cotija&quot;,&quot;Michoacán de Ocampo-Cuitzeo&quot;,&quot;Michoacán de Ocampo-Charapan&quot;,&quot;Michoacán de Ocampo-Charo&quot;,&quot;Michoacán de Ocampo-Chavinda&quot;,&quot;Michoacán de Ocampo-Cherán&quot;,&quot;Michoacán de Ocampo-Chilchota&quot;,&quot;Michoacán de Ocampo-Chinicuila&quot;,&quot;Michoacán de Ocampo-Chucándiro&quot;,&quot;Michoacán de Ocampo-Churintzio&quot;,&quot;Michoacán de Ocampo-Churumuco&quot;,&quot;Michoacán de Ocampo-Ecuandureo&quot;,&quot;Michoacán de Ocampo-Epitacio Huerta&quot;,&quot;Michoacán de Ocampo-Erongarícuaro&quot;,&quot;Michoacán de Ocampo-Gabriel Zamora&quot;,&quot;Michoacán de Ocampo-Hidalgo&quot;,&quot;Michoacán de Ocampo-La Huacana&quot;,&quot;Michoacán de Ocampo-Huandacareo&quot;,&quot;Michoacán de Ocampo-Huaniqueo&quot;,&quot;Michoacán de Ocampo-Huetamo&quot;,&quot;Michoacán de Ocampo-Huiramba&quot;,&quot;Michoacán de Ocampo-Indaparapeo&quot;,&quot;Michoacán de Ocampo-Irimbo&quot;,&quot;Michoacán de Ocampo-Ixtlán&quot;,&quot;Michoacán de Ocampo-Jacona&quot;,&quot;Michoacán de Ocampo-Jiménez&quot;,&quot;Michoacán de Ocampo-Jiquilpan&quot;,&quot;Michoacán de Ocampo-Juárez&quot;,&quot;Michoacán de Ocampo-Jungapeo&quot;,&quot;Michoacán de Ocampo-Lagunillas&quot;,&quot;Michoacán de Ocampo-Madero&quot;,&quot;Michoacán de Ocampo-Maravatío&quot;,&quot;Michoacán de Ocampo-Marcos Castellanos&quot;,&quot;Michoacán de Ocampo-Lázaro Cárdenas&quot;,&quot;Michoacán de Ocampo-Morelia&quot;,&quot;Michoacán de Ocampo-Morelos&quot;,&quot;Michoacán de Ocampo-Múgica&quot;,&quot;Michoacán de Ocampo-Nahuatzen&quot;,&quot;Michoacán de Ocampo-Nocupétaro&quot;,&quot;Michoacán de Ocampo-Nuevo Parangaricutiro&quot;,&quot;Michoacán de Ocampo-Nuevo Urecho&quot;,&quot;Michoacán de Ocampo-Numarán&quot;,&quot;Michoacán de Ocampo-Ocampo&quot;,&quot;Michoacán de Ocampo-Pajacuarán&quot;,&quot;Michoacán de Ocampo-Panindícuaro&quot;,&quot;Michoacán de Ocampo-Parácuaro&quot;,&quot;Michoacán de Ocampo-Paracho&quot;,&quot;Michoacán de Ocampo-Pátzcuaro&quot;,&quot;Michoacán de Ocampo-Penjamillo&quot;,&quot;Michoacán de Ocampo-Peribán&quot;,&quot;Michoacán de Ocampo-La Piedad&quot;,&quot;Michoacán de Ocampo-Purépero&quot;,&quot;Michoacán de Ocampo-Puruándiro&quot;,&quot;Michoacán de Ocampo-Queréndaro&quot;,&quot;Michoacán de Ocampo-Quiroga&quot;,&quot;Michoacán de Ocampo-Cojumatlán de Régules&quot;,&quot;Michoacán de Ocampo-Los Reyes&quot;,&quot;Michoacán de Ocampo-Sahuayo&quot;,&quot;Michoacán de Ocampo-San Lucas&quot;,&quot;Michoacán de Ocampo-Santa Ana Maya&quot;,&quot;Michoacán de Ocampo-Salvador Escalante&quot;,&quot;Michoacán de Ocampo-Senguio&quot;,&quot;Michoacán de Ocampo-Susupuato&quot;,&quot;Michoacán de Ocampo-Tacámbaro&quot;,&quot;Michoacán de Ocampo-Tancítaro&quot;,&quot;Michoacán de Ocampo-Tangamandapio&quot;,&quot;Michoacán de Ocampo-Tangancícuaro&quot;,&quot;Michoacán de Ocampo-Tanhuato&quot;,&quot;Michoacán de Ocampo-Taretan&quot;,&quot;Michoacán de Ocampo-Tarímbaro&quot;,&quot;Michoacán de Ocampo-Tepalcatepec&quot;,&quot;Michoacán de Ocampo-Tingambato&quot;,&quot;Michoacán de Ocampo-Tingüindín&quot;,&quot;Michoacán de Ocampo-Tiquicheo de Nicolás Romero&quot;,&quot;Michoacán de Ocampo-Tlalpujahua&quot;,&quot;Michoacán de Ocampo-Tlazazalca&quot;,&quot;Michoacán de Ocampo-Tocumbo&quot;,&quot;Michoacán de Ocampo-Tumbiscatío&quot;,&quot;Michoacán de Ocampo-Turicato&quot;,&quot;Michoacán de Ocampo-Tuxpan&quot;,&quot;Michoacán de Ocampo-Tuzantla&quot;,&quot;Michoacán de Ocampo-Tzintzuntzan&quot;,&quot;Michoacán de Ocampo-Tzitzio&quot;,&quot;Michoacán de Ocampo-Uruapan&quot;,&quot;Michoacán de Ocampo-Venustiano Carranza&quot;,&quot;Michoacán de Ocampo-Villamar&quot;,&quot;Michoacán de Ocampo-Vista Hermosa&quot;,&quot;Michoacán de Ocampo-Yurécuaro&quot;,&quot;Michoacán de Ocampo-Zacapu&quot;,&quot;Michoacán de Ocampo-Zamora&quot;,&quot;Michoacán de Ocampo-Zináparo&quot;,&quot;Michoacán de Ocampo-Zinapécuaro&quot;,&quot;Michoacán de Ocampo-Ziracuaretiro&quot;,&quot;Michoacán de Ocampo-Zitácuaro&quot;,&quot;Michoacán de Ocampo-José Sixto Verduzco&quot;,&quot;Morelos&quot;,&quot;Morelos-Amacuzac&quot;,&quot;Morelos-Atlatlahucan&quot;,&quot;Morelos-Axochiapan&quot;,&quot;Morelos-Ayala&quot;,&quot;Morelos-Coatlán del Río&quot;,&quot;Morelos-Cuautla&quot;,&quot;Morelos-Cuernavaca&quot;,&quot;Morelos-Emiliano Zapata&quot;,&quot;Morelos-Huitzilac&quot;,&quot;Morelos-Jantetelco&quot;,&quot;Morelos-Jiutepec&quot;,&quot;Morelos-Jojutla&quot;,&quot;Morelos-Jonacatepec&quot;,&quot;Morelos-Mazatepec&quot;,&quot;Morelos-Miacatlán&quot;,&quot;Morelos-Ocuituco&quot;,&quot;Morelos-Puente de Ixtla&quot;,&quot;Morelos-Temixco&quot;,&quot;Morelos-Tepalcingo&quot;,&quot;Morelos-Tepoztlán&quot;,&quot;Morelos-Tetecala&quot;,&quot;Morelos-Tetela del Volcán&quot;,&quot;Morelos-Tlalnepantla&quot;,&quot;Morelos-Tlaltizapán de Zapata&quot;,&quot;Morelos-Tlaquiltenango&quot;,&quot;Morelos-Tlayacapan&quot;,&quot;Morelos-Totolapan&quot;,&quot;Morelos-Xochitepec&quot;,&quot;Morelos-Yautepec&quot;,&quot;Morelos-Yecapixtla&quot;,&quot;Morelos-Zacatepec&quot;,&quot;Morelos-Zacualpan de Amilpas&quot;,&quot;Morelos-Temoac&quot;,&quot;Nayarit&quot;,&quot;Nayarit-Acaponeta&quot;,&quot;Nayarit-Ahuacatlán&quot;,&quot;Nayarit-Amatlán de Cañas&quot;,&quot;Nayarit-Compostela&quot;,&quot;Nayarit-Huajicori&quot;,&quot;Nayarit-Ixtlán del Río&quot;,&quot;Nayarit-Jala&quot;,&quot;Nayarit-Xalisco&quot;,&quot;Nayarit-Del Nayar&quot;,&quot;Nayarit-Rosamorada&quot;,&quot;Nayarit-Ruíz&quot;,&quot;Nayarit-San Blas&quot;,&quot;Nayarit-San Pedro Lagunillas&quot;,&quot;Nayarit-Santa María del Oro&quot;,&quot;Nayarit-Santiago Ixcuintla&quot;,&quot;Nayarit-Tecuala&quot;,&quot;Nayarit-Tepic&quot;,&quot;Nayarit-Tuxpan&quot;,&quot;Nayarit-La Yesca&quot;,&quot;Nayarit-Bahía de Banderas&quot;,&quot;Nuevo León&quot;,&quot;Nuevo León-Abasolo&quot;,&quot;Nuevo León-Agualeguas&quot;,&quot;Nuevo León-Los Aldamas&quot;,&quot;Nuevo León-Allende&quot;,&quot;Nuevo León-Anáhuac&quot;,&quot;Nuevo León-Apodaca&quot;,&quot;Nuevo León-Aramberri&quot;,&quot;Nuevo León-Bustamante&quot;,&quot;Nuevo León-Cadereyta Jiménez&quot;,&quot;Nuevo León-El Carmen&quot;,&quot;Nuevo León-Cerralvo&quot;,&quot;Nuevo León-Ciénega de Flores&quot;,&quot;Nuevo León-China&quot;,&quot;Nuevo León-Doctor Arroyo&quot;,&quot;Nuevo León-Doctor Coss&quot;,&quot;Nuevo León-Doctor González&quot;,&quot;Nuevo León-Galeana&quot;,&quot;Nuevo León-García&quot;,&quot;Nuevo León-San Pedro Garza García&quot;,&quot;Nuevo León-General Bravo&quot;,&quot;Nuevo León-General Escobedo&quot;,&quot;Nuevo León-General Terán&quot;,&quot;Nuevo León-General Treviño&quot;,&quot;Nuevo León-General Zaragoza&quot;,&quot;Nuevo León-General Zuazua&quot;,&quot;Nuevo León-Guadalupe&quot;,&quot;Nuevo León-Los Herreras&quot;,&quot;Nuevo León-Higueras&quot;,&quot;Nuevo León-Hualahuises&quot;,&quot;Nuevo León-Iturbide&quot;,&quot;Nuevo León-Juárez&quot;,&quot;Nuevo León-Lampazos de Naranjo&quot;,&quot;Nuevo León-Linares&quot;,&quot;Nuevo León-Marín&quot;,&quot;Nuevo León-Melchor Ocampo&quot;,&quot;Nuevo León-Mier y Noriega&quot;,&quot;Nuevo León-Mina&quot;,&quot;Nuevo León-Montemorelos&quot;,&quot;Nuevo León-Monterrey&quot;,&quot;Nuevo León-Parás&quot;,&quot;Nuevo León-Pesquería&quot;,&quot;Nuevo León-Los Ramones&quot;,&quot;Nuevo León-Rayones&quot;,&quot;Nuevo León-Sabinas Hidalgo&quot;,&quot;Nuevo León-Salinas Victoria&quot;,&quot;Nuevo León-San Nicolás de los Garza&quot;,&quot;Nuevo León-Hidalgo&quot;,&quot;Nuevo León-Santa Catarina&quot;,&quot;Nuevo León-Santiago&quot;,&quot;Nuevo León-Vallecillo&quot;,&quot;Nuevo León-Villaldama&quot;,&quot;Oaxaca&quot;,&quot;Oaxaca-Abejones&quot;,&quot;Oaxaca-Acatlán de Pérez Figueroa&quot;,&quot;Oaxaca-Asunción Cacalotepec&quot;,&quot;Oaxaca-Asunción Cuyotepeji&quot;,&quot;Oaxaca-Asunción Ixtaltepec&quot;,&quot;Oaxaca-Asunción Nochixtlán&quot;,&quot;Oaxaca-Asunción Ocotlán&quot;,&quot;Oaxaca-Asunción Tlacolulita&quot;,&quot;Oaxaca-Ayotzintepec&quot;,&quot;Oaxaca-El Barrio de la Soledad&quot;,&quot;Oaxaca-Calihualá&quot;,&quot;Oaxaca-Candelaria Loxicha&quot;,&quot;Oaxaca-Ciénega de Zimatlán&quot;,&quot;Oaxaca-Ciudad Ixtepec&quot;,&quot;Oaxaca-Coatecas Altas&quot;,&quot;Oaxaca-Coicoyán de las Flores&quot;,&quot;Oaxaca-La Compañía&quot;,&quot;Oaxaca-Concepción Buenavista&quot;,&quot;Oaxaca-Concepción Pápalo&quot;,&quot;Oaxaca-Constancia del Rosario&quot;,&quot;Oaxaca-Cosolapa&quot;,&quot;Oaxaca-Cosoltepec&quot;,&quot;Oaxaca-Cuilápam de Guerrero&quot;,&quot;Oaxaca-Cuyamecalco Villa de Zaragoza&quot;,&quot;Oaxaca-Chahuites&quot;,&quot;Oaxaca-Chalcatongo de Hidalgo&quot;,&quot;Oaxaca-Chiquihuitlán de Benito Juárez&quot;,&quot;Oaxaca-Heroica Ciudad de Ejutla de Crespo&quot;,&quot;Oaxaca-Eloxochitlán de Flores Magón&quot;,&quot;Oaxaca-El Espinal&quot;,&quot;Oaxaca-Tamazulápam del Espíritu Santo&quot;,&quot;Oaxaca-Fresnillo de Trujano&quot;,&quot;Oaxaca-Guadalupe Etla&quot;,&quot;Oaxaca-Guadalupe de Ramírez&quot;,&quot;Oaxaca-Guelatao de Juárez&quot;,&quot;Oaxaca-Guevea de Humboldt&quot;,&quot;Oaxaca-Mesones Hidalgo&quot;,&quot;Oaxaca-Villa Hidalgo&quot;,&quot;Oaxaca-Heroica Ciudad de Huajuapan de León&quot;,&quot;Oaxaca-Huautepec&quot;,&quot;Oaxaca-Huautla de Jiménez&quot;,&quot;Oaxaca-Ixtlán de Juárez&quot;,&quot;Oaxaca-Heroica Ciudad de Juchitán de Zaragoza&quot;,&quot;Oaxaca-Loma Bonita&quot;,&quot;Oaxaca-Magdalena Apasco&quot;,&quot;Oaxaca-Magdalena Jaltepec&quot;,&quot;Oaxaca-Santa Magdalena Jicotlán&quot;,&quot;Oaxaca-Magdalena Mixtepec&quot;,&quot;Oaxaca-Magdalena Ocotlán&quot;,&quot;Oaxaca-Magdalena Peñasco&quot;,&quot;Oaxaca-Magdalena Teitipac&quot;,&quot;Oaxaca-Magdalena Tequisistlán&quot;,&quot;Oaxaca-Magdalena Tlacotepec&quot;,&quot;Oaxaca-Magdalena Zahuatlán&quot;,&quot;Oaxaca-Mariscala de Juárez&quot;,&quot;Oaxaca-Mártires de Tacubaya&quot;,&quot;Oaxaca-Matías Romero Avendaño&quot;,&quot;Oaxaca-Mazatlán Villa de Flores&quot;,&quot;Oaxaca-Miahuatlán de Porfirio Díaz&quot;,&quot;Oaxaca-Mixistlán de la Reforma&quot;,&quot;Oaxaca-Monjas&quot;,&quot;Oaxaca-Natividad&quot;,&quot;Oaxaca-Nazareno Etla&quot;,&quot;Oaxaca-Nejapa de Madero&quot;,&quot;Oaxaca-Ixpantepec Nieves&quot;,&quot;Oaxaca-Santiago Niltepec&quot;,&quot;Oaxaca-Oaxaca de Juárez&quot;,&quot;Oaxaca-Ocotlán de Morelos&quot;,&quot;Oaxaca-La Pe&quot;,&quot;Oaxaca-Pinotepa de Don Luis&quot;,&quot;Oaxaca-Pluma Hidalgo&quot;,&quot;Oaxaca-San José del Progreso&quot;,&quot;Oaxaca-Putla Villa de Guerrero&quot;,&quot;Oaxaca-Santa Catarina Quioquitani&quot;,&quot;Oaxaca-Reforma de Pineda&quot;,&quot;Oaxaca-La Reforma&quot;,&quot;Oaxaca-Reyes Etla&quot;,&quot;Oaxaca-Rojas de Cuauhtémoc&quot;,&quot;Oaxaca-Salina Cruz&quot;,&quot;Oaxaca-San Agustín Amatengo&quot;,&quot;Oaxaca-San Agustín Atenango&quot;,&quot;Oaxaca-San Agustín Chayuco&quot;,&quot;Oaxaca-San Agustín de las Juntas&quot;,&quot;Oaxaca-San Agustín Etla&quot;,&quot;Oaxaca-San Agustín Loxicha&quot;,&quot;Oaxaca-San Agustín Tlacotepec&quot;,&quot;Oaxaca-San Agustín Yatareni&quot;,&quot;Oaxaca-San Andrés Cabecera Nueva&quot;,&quot;Oaxaca-San Andrés Dinicuiti&quot;,&quot;Oaxaca-San Andrés Huaxpaltepec&quot;,&quot;Oaxaca-San Andrés Huayápam&quot;,&quot;Oaxaca-San Andrés Ixtlahuaca&quot;,&quot;Oaxaca-San Andrés Lagunas&quot;,&quot;Oaxaca-San Andrés Nuxiño&quot;,&quot;Oaxaca-San Andrés Paxtlán&quot;,&quot;Oaxaca-San Andrés Sinaxtla&quot;,&quot;Oaxaca-San Andrés Solaga&quot;,&quot;Oaxaca-San Andrés Teotilálpam&quot;,&quot;Oaxaca-San Andrés Tepetlapa&quot;,&quot;Oaxaca-San Andrés Yaá&quot;,&quot;Oaxaca-San Andrés Zabache&quot;,&quot;Oaxaca-San Andrés Zautla&quot;,&quot;Oaxaca-San Antonino Castillo Velasco&quot;,&quot;Oaxaca-San Antonino el Alto&quot;,&quot;Oaxaca-San Antonino Monte Verde&quot;,&quot;Oaxaca-San Antonio Acutla&quot;,&quot;Oaxaca-San Antonio de la Cal&quot;,&quot;Oaxaca-San Antonio Huitepec&quot;,&quot;Oaxaca-San Antonio Nanahuatípam&quot;,&quot;Oaxaca-San Antonio Sinicahua&quot;,&quot;Oaxaca-San Antonio Tepetlapa&quot;,&quot;Oaxaca-San Baltazar Chichicápam&quot;,&quot;Oaxaca-San Baltazar Loxicha&quot;,&quot;Oaxaca-San Baltazar Yatzachi el Bajo&quot;,&quot;Oaxaca-San Bartolo Coyotepec&quot;,&quot;Oaxaca-San Bartolomé Ayautla&quot;,&quot;Oaxaca-San Bartolomé Loxicha&quot;,&quot;Oaxaca-San Bartolomé Quialana&quot;,&quot;Oaxaca-San Bartolomé Yucuañe&quot;,&quot;Oaxaca-San Bartolomé Zoogocho&quot;,&quot;Oaxaca-San Bartolo Soyaltepec&quot;,&quot;Oaxaca-San Bartolo Yautepec&quot;,&quot;Oaxaca-San Bernardo Mixtepec&quot;,&quot;Oaxaca-San Blas Atempa&quot;,&quot;Oaxaca-San Carlos Yautepec&quot;,&quot;Oaxaca-San Cristóbal Amatlán&quot;,&quot;Oaxaca-San Cristóbal Amoltepec&quot;,&quot;Oaxaca-San Cristóbal Lachirioag&quot;,&quot;Oaxaca-San Cristóbal Suchixtlahuaca&quot;,&quot;Oaxaca-San Dionisio del Mar&quot;,&quot;Oaxaca-San Dionisio Ocotepec&quot;,&quot;Oaxaca-San Dionisio Ocotlán&quot;,&quot;Oaxaca-San Esteban Atatlahuca&quot;,&quot;Oaxaca-San Felipe Jalapa de Díaz&quot;,&quot;Oaxaca-San Felipe Tejalápam&quot;,&quot;Oaxaca-San Felipe Usila&quot;,&quot;Oaxaca-San Francisco Cahuacuá&quot;,&quot;Oaxaca-San Francisco Cajonos&quot;,&quot;Oaxaca-San Francisco Chapulapa&quot;,&quot;Oaxaca-San Francisco Chindúa&quot;,&quot;Oaxaca-San Francisco del Mar&quot;,&quot;Oaxaca-San Francisco Huehuetlán&quot;,&quot;Oaxaca-San Francisco Ixhuatán&quot;,&quot;Oaxaca-San Francisco Jaltepetongo&quot;,&quot;Oaxaca-San Francisco Lachigoló&quot;,&quot;Oaxaca-San Francisco Logueche&quot;,&quot;Oaxaca-San Francisco Nuxaño&quot;,&quot;Oaxaca-San Francisco Ozolotepec&quot;,&quot;Oaxaca-San Francisco Sola&quot;,&quot;Oaxaca-San Francisco Telixtlahuaca&quot;,&quot;Oaxaca-San Francisco Teopan&quot;,&quot;Oaxaca-San Francisco Tlapancingo&quot;,&quot;Oaxaca-San Gabriel Mixtepec&quot;,&quot;Oaxaca-San Ildefonso Amatlán&quot;,&quot;Oaxaca-San Ildefonso Sola&quot;,&quot;Oaxaca-San Ildefonso Villa Alta&quot;,&quot;Oaxaca-San Jacinto Amilpas&quot;,&quot;Oaxaca-San Jacinto Tlacotepec&quot;,&quot;Oaxaca-San Jerónimo Coatlán&quot;,&quot;Oaxaca-San Jerónimo Silacayoapilla&quot;,&quot;Oaxaca-San Jerónimo Sosola&quot;,&quot;Oaxaca-San Jerónimo Taviche&quot;,&quot;Oaxaca-San Jerónimo Tecóatl&quot;,&quot;Oaxaca-San Jorge Nuchita&quot;,&quot;Oaxaca-San José Ayuquila&quot;,&quot;Oaxaca-San José Chiltepec&quot;,&quot;Oaxaca-San José del Peñasco&quot;,&quot;Oaxaca-San José Estancia Grande&quot;,&quot;Oaxaca-San José Independencia&quot;,&quot;Oaxaca-San José Lachiguiri&quot;,&quot;Oaxaca-San José Tenango&quot;,&quot;Oaxaca-San Juan Achiutla&quot;,&quot;Oaxaca-San Juan Atepec&quot;,&quot;Oaxaca-Ánimas Trujano&quot;,&quot;Oaxaca-San Juan Bautista Atatlahuca&quot;,&quot;Oaxaca-San Juan Bautista Coixtlahuaca&quot;,&quot;Oaxaca-San Juan Bautista Cuicatlán&quot;,&quot;Oaxaca-San Juan Bautista Guelache&quot;,&quot;Oaxaca-San Juan Bautista Jayacatlán&quot;,&quot;Oaxaca-San Juan Bautista Lo de Soto&quot;,&quot;Oaxaca-San Juan Bautista Suchitepec&quot;,&quot;Oaxaca-San Juan Bautista Tlacoatzintepec&quot;,&quot;Oaxaca-San Juan Bautista Tlachichilco&quot;,&quot;Oaxaca-San Juan Bautista Tuxtepec&quot;,&quot;Oaxaca-San Juan Cacahuatepec&quot;,&quot;Oaxaca-San Juan Cieneguilla&quot;,&quot;Oaxaca-San Juan Coatzóspam&quot;,&quot;Oaxaca-San Juan Colorado&quot;,&quot;Oaxaca-San Juan Comaltepec&quot;,&quot;Oaxaca-San Juan Cotzocón&quot;,&quot;Oaxaca-San Juan Chicomezúchil&quot;,&quot;Oaxaca-San Juan Chilateca&quot;,&quot;Oaxaca-San Juan del Estado&quot;,&quot;Oaxaca-San Juan del Río&quot;,&quot;Oaxaca-San Juan Diuxi&quot;,&quot;Oaxaca-San Juan Evangelista Analco&quot;,&quot;Oaxaca-San Juan Guelavía&quot;,&quot;Oaxaca-San Juan Guichicovi&quot;,&quot;Oaxaca-San Juan Ihualtepec&quot;,&quot;Oaxaca-San Juan Juquila Mixes&quot;,&quot;Oaxaca-San Juan Juquila Vijanos&quot;,&quot;Oaxaca-San Juan Lachao&quot;,&quot;Oaxaca-San Juan Lachigalla&quot;,&quot;Oaxaca-San Juan Lajarcia&quot;,&quot;Oaxaca-San Juan Lalana&quot;,&quot;Oaxaca-San Juan de los Cués&quot;,&quot;Oaxaca-San Juan Mazatlán&quot;,&quot;Oaxaca-San Juan Mixtepec -Dto. 08 -&quot;,&quot;Oaxaca-San Juan Mixtepec -Dto. 26 -&quot;,&quot;Oaxaca-San Juan Ñumí&quot;,&quot;Oaxaca-San Juan Ozolotepec&quot;,&quot;Oaxaca-San Juan Petlapa&quot;,&quot;Oaxaca-San Juan Quiahije&quot;,&quot;Oaxaca-San Juan Quiotepec&quot;,&quot;Oaxaca-San Juan Sayultepec&quot;,&quot;Oaxaca-San Juan Tabaá&quot;,&quot;Oaxaca-San Juan Tamazola&quot;,&quot;Oaxaca-San Juan Teita&quot;,&quot;Oaxaca-San Juan Teitipac&quot;,&quot;Oaxaca-San Juan Tepeuxila&quot;,&quot;Oaxaca-San Juan Teposcolula&quot;,&quot;Oaxaca-San Juan Yaeé&quot;,&quot;Oaxaca-San Juan Yatzona&quot;,&quot;Oaxaca-San Juan Yucuita&quot;,&quot;Oaxaca-San Lorenzo&quot;,&quot;Oaxaca-San Lorenzo Albarradas&quot;,&quot;Oaxaca-San Lorenzo Cacaotepec&quot;,&quot;Oaxaca-San Lorenzo Cuaunecuiltitla&quot;,&quot;Oaxaca-San Lorenzo Texmelúcan&quot;,&quot;Oaxaca-San Lorenzo Victoria&quot;,&quot;Oaxaca-San Lucas Camotlán&quot;,&quot;Oaxaca-San Lucas Ojitlán&quot;,&quot;Oaxaca-San Lucas Quiaviní&quot;,&quot;Oaxaca-San Lucas Zoquiápam&quot;,&quot;Oaxaca-San Luis Amatlán&quot;,&quot;Oaxaca-San Marcial Ozolotepec&quot;,&quot;Oaxaca-San Marcos Arteaga&quot;,&quot;Oaxaca-San Martín de los Cansecos&quot;,&quot;Oaxaca-San Martín Huamelúlpam&quot;,&quot;Oaxaca-San Martín Itunyoso&quot;,&quot;Oaxaca-San Martín Lachilá&quot;,&quot;Oaxaca-San Martín Peras&quot;,&quot;Oaxaca-San Martín Tilcajete&quot;,&quot;Oaxaca-San Martín Toxpalan&quot;,&quot;Oaxaca-San Martín Zacatepec&quot;,&quot;Oaxaca-San Mateo Cajonos&quot;,&quot;Oaxaca-Capulálpam de Méndez&quot;,&quot;Oaxaca-San Mateo del Mar&quot;,&quot;Oaxaca-San Mateo Yoloxochitlán&quot;,&quot;Oaxaca-San Mateo Etlatongo&quot;,&quot;Oaxaca-San Mateo Nejápam&quot;,&quot;Oaxaca-San Mateo Peñasco&quot;,&quot;Oaxaca-San Mateo Piñas&quot;,&quot;Oaxaca-San Mateo Río Hondo&quot;,&quot;Oaxaca-San Mateo Sindihui&quot;,&quot;Oaxaca-San Mateo Tlapiltepec&quot;,&quot;Oaxaca-San Melchor Betaza&quot;,&quot;Oaxaca-San Miguel Achiutla&quot;,&quot;Oaxaca-San Miguel Ahuehuetitlán&quot;,&quot;Oaxaca-San Miguel Aloápam&quot;,&quot;Oaxaca-San Miguel Amatitlán&quot;,&quot;Oaxaca-San Miguel Amatlán&quot;,&quot;Oaxaca-San Miguel Coatlán&quot;,&quot;Oaxaca-San Miguel Chicahua&quot;,&quot;Oaxaca-San Miguel Chimalapa&quot;,&quot;Oaxaca-San Miguel del Puerto&quot;,&quot;Oaxaca-San Miguel del Río&quot;,&quot;Oaxaca-San Miguel Ejutla&quot;,&quot;Oaxaca-San Miguel el Grande&quot;,&quot;Oaxaca-San Miguel Huautla&quot;,&quot;Oaxaca-San Miguel Mixtepec&quot;,&quot;Oaxaca-San Miguel Panixtlahuaca&quot;,&quot;Oaxaca-San Miguel Peras&quot;,&quot;Oaxaca-San Miguel Piedras&quot;,&quot;Oaxaca-San Miguel Quetzaltepec&quot;,&quot;Oaxaca-San Miguel Santa Flor&quot;,&quot;Oaxaca-Villa Sola de Vega&quot;,&quot;Oaxaca-San Miguel Soyaltepec&quot;,&quot;Oaxaca-San Miguel Suchixtepec&quot;,&quot;Oaxaca-Villa Talea de Castro&quot;,&quot;Oaxaca-San Miguel Tecomatlán&quot;,&quot;Oaxaca-San Miguel Tenango&quot;,&quot;Oaxaca-San Miguel Tequixtepec&quot;,&quot;Oaxaca-San Miguel Tilquiápam&quot;,&quot;Oaxaca-San Miguel Tlacamama&quot;,&quot;Oaxaca-San Miguel Tlacotepec&quot;,&quot;Oaxaca-San Miguel Tulancingo&quot;,&quot;Oaxaca-San Miguel Yotao&quot;,&quot;Oaxaca-San Nicolás&quot;,&quot;Oaxaca-San Nicolás Hidalgo&quot;,&quot;Oaxaca-San Pablo Coatlán&quot;,&quot;Oaxaca-San Pablo Cuatro Venados&quot;,&quot;Oaxaca-San Pablo Etla&quot;,&quot;Oaxaca-San Pablo Huitzo&quot;,&quot;Oaxaca-San Pablo Huixtepec&quot;,&quot;Oaxaca-San Pablo Macuiltianguis&quot;,&quot;Oaxaca-San Pablo Tijaltepec&quot;,&quot;Oaxaca-San Pablo Villa de Mitla&quot;,&quot;Oaxaca-San Pablo Yaganiza&quot;,&quot;Oaxaca-San Pedro Amuzgos&quot;,&quot;Oaxaca-San Pedro Apóstol&quot;,&quot;Oaxaca-San Pedro Atoyac&quot;,&quot;Oaxaca-San Pedro Cajonos&quot;,&quot;Oaxaca-San Pedro Coxcaltepec Cántaros&quot;,&quot;Oaxaca-San Pedro Comitancillo&quot;,&quot;Oaxaca-San Pedro el Alto&quot;,&quot;Oaxaca-San Pedro Huamelula&quot;,&quot;Oaxaca-San Pedro Huilotepec&quot;,&quot;Oaxaca-San Pedro Ixcatlán&quot;,&quot;Oaxaca-San Pedro Ixtlahuaca&quot;,&quot;Oaxaca-San Pedro Jaltepetongo&quot;,&quot;Oaxaca-San Pedro Jicayán&quot;,&quot;Oaxaca-San Pedro Jocotipac&quot;,&quot;Oaxaca-San Pedro Juchatengo&quot;,&quot;Oaxaca-San Pedro Mártir&quot;,&quot;Oaxaca-San Pedro Mártir Quiechapa&quot;,&quot;Oaxaca-San Pedro Mártir Yucuxaco&quot;,&quot;Oaxaca-San Pedro Mixtepec -Dto. 22 -&quot;,&quot;Oaxaca-San Pedro Mixtepec -Dto. 26 -&quot;,&quot;Oaxaca-San Pedro Molinos&quot;,&quot;Oaxaca-San Pedro Nopala&quot;,&quot;Oaxaca-San Pedro Ocopetatillo&quot;,&quot;Oaxaca-San Pedro Ocotepec&quot;,&quot;Oaxaca-San Pedro Pochutla&quot;,&quot;Oaxaca-San Pedro Quiatoni&quot;,&quot;Oaxaca-San Pedro Sochiápam&quot;,&quot;Oaxaca-San Pedro Tapanatepec&quot;,&quot;Oaxaca-San Pedro Taviche&quot;,&quot;Oaxaca-San Pedro Teozacoalco&quot;,&quot;Oaxaca-San Pedro Teutila&quot;,&quot;Oaxaca-San Pedro Tidaá&quot;,&quot;Oaxaca-San Pedro Topiltepec&quot;,&quot;Oaxaca-San Pedro Totolápam&quot;,&quot;Oaxaca-Villa de Tututepec de Melchor Ocampo&quot;,&quot;Oaxaca-San Pedro Yaneri&quot;,&quot;Oaxaca-San Pedro Yólox&quot;,&quot;Oaxaca-San Pedro y San Pablo Ayutla&quot;,&quot;Oaxaca-Villa de Etla&quot;,&quot;Oaxaca-San Pedro y San Pablo Teposcolula&quot;,&quot;Oaxaca-San Pedro y San Pablo Tequixtepec&quot;,&quot;Oaxaca-San Pedro Yucunama&quot;,&quot;Oaxaca-San Raymundo Jalpan&quot;,&quot;Oaxaca-San Sebastián Abasolo&quot;,&quot;Oaxaca-San Sebastián Coatlán&quot;,&quot;Oaxaca-San Sebastián Ixcapa&quot;,&quot;Oaxaca-San Sebastián Nicananduta&quot;,&quot;Oaxaca-San Sebastián Río Hondo&quot;,&quot;Oaxaca-San Sebastián Tecomaxtlahuaca&quot;,&quot;Oaxaca-San Sebastián Teitipac&quot;,&quot;Oaxaca-San Sebastián Tutla&quot;,&quot;Oaxaca-San Simón Almolongas&quot;,&quot;Oaxaca-San Simón Zahuatlán&quot;,&quot;Oaxaca-Santa Ana&quot;,&quot;Oaxaca-Santa Ana Ateixtlahuaca&quot;,&quot;Oaxaca-Santa Ana Cuauhtémoc&quot;,&quot;Oaxaca-Santa Ana del Valle&quot;,&quot;Oaxaca-Santa Ana Tavela&quot;,&quot;Oaxaca-Santa Ana Tlapacoyan&quot;,&quot;Oaxaca-Santa Ana Yareni&quot;,&quot;Oaxaca-Santa Ana Zegache&quot;,&quot;Oaxaca-Santa Catalina Quierí&quot;,&quot;Oaxaca-Santa Catarina Cuixtla&quot;,&quot;Oaxaca-Santa Catarina Ixtepeji&quot;,&quot;Oaxaca-Santa Catarina Juquila&quot;,&quot;Oaxaca-Santa Catarina Lachatao&quot;,&quot;Oaxaca-Santa Catarina Loxicha&quot;,&quot;Oaxaca-Santa Catarina Mechoacán&quot;,&quot;Oaxaca-Santa Catarina Minas&quot;,&quot;Oaxaca-Santa Catarina Quiané&quot;,&quot;Oaxaca-Santa Catarina Tayata&quot;,&quot;Oaxaca-Santa Catarina Ticuá&quot;,&quot;Oaxaca-Santa Catarina Yosonotú&quot;,&quot;Oaxaca-Santa Catarina Zapoquila&quot;,&quot;Oaxaca-Santa Cruz Acatepec&quot;,&quot;Oaxaca-Santa Cruz Amilpas&quot;,&quot;Oaxaca-Santa Cruz de Bravo&quot;,&quot;Oaxaca-Santa Cruz Itundujia&quot;,&quot;Oaxaca-Santa Cruz Mixtepec&quot;,&quot;Oaxaca-Santa Cruz Nundaco&quot;,&quot;Oaxaca-Santa Cruz Papalutla&quot;,&quot;Oaxaca-Santa Cruz Tacache de Mina&quot;,&quot;Oaxaca-Santa Cruz Tacahua&quot;,&quot;Oaxaca-Santa Cruz Tayata&quot;,&quot;Oaxaca-Santa Cruz Xitla&quot;,&quot;Oaxaca-Santa Cruz Xoxocotlán&quot;,&quot;Oaxaca-Santa Cruz Zenzontepec&quot;,&quot;Oaxaca-Santa Gertrudis&quot;,&quot;Oaxaca-Santa Inés del Monte&quot;,&quot;Oaxaca-Santa Inés Yatzeche&quot;,&quot;Oaxaca-Santa Lucía del Camino&quot;,&quot;Oaxaca-Santa Lucía Miahuatlán&quot;,&quot;Oaxaca-Santa Lucía Monteverde&quot;,&quot;Oaxaca-Santa Lucía Ocotlán&quot;,&quot;Oaxaca-Santa María Alotepec&quot;,&quot;Oaxaca-Santa María Apazco&quot;,&quot;Oaxaca-Santa María la Asunción&quot;,&quot;Oaxaca-Heroica Ciudad de Tlaxiaco&quot;,&quot;Oaxaca-Ayoquezco de Aldama&quot;,&quot;Oaxaca-Santa María Atzompa&quot;,&quot;Oaxaca-Santa María Camotlán&quot;,&quot;Oaxaca-Santa María Colotepec&quot;,&quot;Oaxaca-Santa María Cortijo&quot;,&quot;Oaxaca-Santa María Coyotepec&quot;,&quot;Oaxaca-Santa María Chachoápam&quot;,&quot;Oaxaca-Villa de Chilapa de Díaz&quot;,&quot;Oaxaca-Santa María Chilchotla&quot;,&quot;Oaxaca-Santa María Chimalapa&quot;,&quot;Oaxaca-Santa María del Rosario&quot;,&quot;Oaxaca-Santa María del Tule&quot;,&quot;Oaxaca-Santa María Ecatepec&quot;,&quot;Oaxaca-Santa María Guelacé&quot;,&quot;Oaxaca-Santa María Guienagati&quot;,&quot;Oaxaca-Santa María Huatulco&quot;,&quot;Oaxaca-Santa María Huazolotitlán&quot;,&quot;Oaxaca-Santa María Ipalapa&quot;,&quot;Oaxaca-Santa María Ixcatlán&quot;,&quot;Oaxaca-Santa María Jacatepec&quot;,&quot;Oaxaca-Santa María Jalapa del Marqués&quot;,&quot;Oaxaca-Santa María Jaltianguis&quot;,&quot;Oaxaca-Santa María Lachixío&quot;,&quot;Oaxaca-Santa María Mixtequilla&quot;,&quot;Oaxaca-Santa María Nativitas&quot;,&quot;Oaxaca-Santa María Nduayaco&quot;,&quot;Oaxaca-Santa María Ozolotepec&quot;,&quot;Oaxaca-Santa María Pápalo&quot;,&quot;Oaxaca-Santa María Peñoles&quot;,&quot;Oaxaca-Santa María Petapa&quot;,&quot;Oaxaca-Santa María Quiegolani&quot;,&quot;Oaxaca-Santa María Sola&quot;,&quot;Oaxaca-Santa María Tataltepec&quot;,&quot;Oaxaca-Santa María Tecomavaca&quot;,&quot;Oaxaca-Santa María Temaxcalapa&quot;,&quot;Oaxaca-Santa María Temaxcaltepec&quot;,&quot;Oaxaca-Santa María Teopoxco&quot;,&quot;Oaxaca-Santa María Tepantlali&quot;,&quot;Oaxaca-Santa María Texcatitlán&quot;,&quot;Oaxaca-Santa María Tlahuitoltepec&quot;,&quot;Oaxaca-Santa María Tlalixtac&quot;,&quot;Oaxaca-Santa María Tonameca&quot;,&quot;Oaxaca-Santa María Totolapilla&quot;,&quot;Oaxaca-Santa María Xadani&quot;,&quot;Oaxaca-Santa María Yalina&quot;,&quot;Oaxaca-Santa María Yavesía&quot;,&quot;Oaxaca-Santa María Yolotepec&quot;,&quot;Oaxaca-Santa María Yosoyúa&quot;,&quot;Oaxaca-Santa María Yucuhiti&quot;,&quot;Oaxaca-Santa María Zacatepec&quot;,&quot;Oaxaca-Santa María Zaniza&quot;,&quot;Oaxaca-Santa María Zoquitlán&quot;,&quot;Oaxaca-Santiago Amoltepec&quot;,&quot;Oaxaca-Santiago Apoala&quot;,&quot;Oaxaca-Santiago Apóstol&quot;,&quot;Oaxaca-Santiago Astata&quot;,&quot;Oaxaca-Santiago Atitlán&quot;,&quot;Oaxaca-Santiago Ayuquililla&quot;,&quot;Oaxaca-Santiago Cacaloxtepec&quot;,&quot;Oaxaca-Santiago Camotlán&quot;,&quot;Oaxaca-Santiago Comaltepec&quot;,&quot;Oaxaca-Santiago Chazumba&quot;,&quot;Oaxaca-Santiago Choápam&quot;,&quot;Oaxaca-Santiago del Río&quot;,&quot;Oaxaca-Santiago Huajolotitlán&quot;,&quot;Oaxaca-Santiago Huauclilla&quot;,&quot;Oaxaca-Santiago Ihuitlán Plumas&quot;,&quot;Oaxaca-Santiago Ixcuintepec&quot;,&quot;Oaxaca-Santiago Ixtayutla&quot;,&quot;Oaxaca-Santiago Jamiltepec&quot;,&quot;Oaxaca-Santiago Jocotepec&quot;,&quot;Oaxaca-Santiago Juxtlahuaca&quot;,&quot;Oaxaca-Santiago Lachiguiri&quot;,&quot;Oaxaca-Santiago Lalopa&quot;,&quot;Oaxaca-Santiago Laollaga&quot;,&quot;Oaxaca-Santiago Laxopa&quot;,&quot;Oaxaca-Santiago Llano Grande&quot;,&quot;Oaxaca-Santiago Matatlán&quot;,&quot;Oaxaca-Santiago Miltepec&quot;,&quot;Oaxaca-Santiago Minas&quot;,&quot;Oaxaca-Santiago Nacaltepec&quot;,&quot;Oaxaca-Santiago Nejapilla&quot;,&quot;Oaxaca-Santiago Nundiche&quot;,&quot;Oaxaca-Santiago Nuyoó&quot;,&quot;Oaxaca-Santiago Pinotepa Nacional&quot;,&quot;Oaxaca-Santiago Suchilquitongo&quot;,&quot;Oaxaca-Santiago Tamazola&quot;,&quot;Oaxaca-Santiago Tapextla&quot;,&quot;Oaxaca-Villa Tejúpam de la Unión&quot;,&quot;Oaxaca-Santiago Tenango&quot;,&quot;Oaxaca-Santiago Tepetlapa&quot;,&quot;Oaxaca-Santiago Tetepec&quot;,&quot;Oaxaca-Santiago Texcalcingo&quot;,&quot;Oaxaca-Santiago Textitlán&quot;,&quot;Oaxaca-Santiago Tilantongo&quot;,&quot;Oaxaca-Santiago Tillo&quot;,&quot;Oaxaca-Santiago Tlazoyaltepec&quot;,&quot;Oaxaca-Santiago Xanica&quot;,&quot;Oaxaca-Santiago Xiacuí&quot;,&quot;Oaxaca-Santiago Yaitepec&quot;,&quot;Oaxaca-Santiago Yaveo&quot;,&quot;Oaxaca-Santiago Yolomécatl&quot;,&quot;Oaxaca-Santiago Yosondúa&quot;,&quot;Oaxaca-Santiago Yucuyachi&quot;,&quot;Oaxaca-Santiago Zacatepec&quot;,&quot;Oaxaca-Santiago Zoochila&quot;,&quot;Oaxaca-Nuevo Zoquiápam&quot;,&quot;Oaxaca-Santo Domingo Ingenio&quot;,&quot;Oaxaca-Santo Domingo Albarradas&quot;,&quot;Oaxaca-Santo Domingo Armenta&quot;,&quot;Oaxaca-Santo Domingo Chihuitán&quot;,&quot;Oaxaca-Santo Domingo de Morelos&quot;,&quot;Oaxaca-Santo Domingo Ixcatlán&quot;,&quot;Oaxaca-Santo Domingo Nuxaá&quot;,&quot;Oaxaca-Santo Domingo Ozolotepec&quot;,&quot;Oaxaca-Santo Domingo Petapa&quot;,&quot;Oaxaca-Santo Domingo Roayaga&quot;,&quot;Oaxaca-Santo Domingo Tehuantepec&quot;,&quot;Oaxaca-Santo Domingo Teojomulco&quot;,&quot;Oaxaca-Santo Domingo Tepuxtepec&quot;,&quot;Oaxaca-Santo Domingo Tlatayápam&quot;,&quot;Oaxaca-Santo Domingo Tomaltepec&quot;,&quot;Oaxaca-Santo Domingo Tonalá&quot;,&quot;Oaxaca-Santo Domingo Tonaltepec&quot;,&quot;Oaxaca-Santo Domingo Xagacía&quot;,&quot;Oaxaca-Santo Domingo Yanhuitlán&quot;,&quot;Oaxaca-Santo Domingo Yodohino&quot;,&quot;Oaxaca-Santo Domingo Zanatepec&quot;,&quot;Oaxaca-Santos Reyes Nopala&quot;,&quot;Oaxaca-Santos Reyes Pápalo&quot;,&quot;Oaxaca-Santos Reyes Tepejillo&quot;,&quot;Oaxaca-Santos Reyes Yucuná&quot;,&quot;Oaxaca-Santo Tomás Jalieza&quot;,&quot;Oaxaca-Santo Tomás Mazaltepec&quot;,&quot;Oaxaca-Santo Tomás Ocotepec&quot;,&quot;Oaxaca-Santo Tomás Tamazulapan&quot;,&quot;Oaxaca-San Vicente Coatlán&quot;,&quot;Oaxaca-San Vicente Lachixío&quot;,&quot;Oaxaca-San Vicente Nuñú&quot;,&quot;Oaxaca-Silacayoápam&quot;,&quot;Oaxaca-Sitio de Xitlapehua&quot;,&quot;Oaxaca-Soledad Etla&quot;,&quot;Oaxaca-Villa de Tamazulápam del Progreso&quot;,&quot;Oaxaca-Tanetze de Zaragoza&quot;,&quot;Oaxaca-Taniche&quot;,&quot;Oaxaca-Tataltepec de Valdés&quot;,&quot;Oaxaca-Teococuilco de Marcos Pérez&quot;,&quot;Oaxaca-Teotitlán de Flores Magón&quot;,&quot;Oaxaca-Teotitlán del Valle&quot;,&quot;Oaxaca-Teotongo&quot;,&quot;Oaxaca-Tepelmeme Villa de Morelos&quot;,&quot;Oaxaca-Heroica Villa Tezoatlán de Segura y Luna Cuna de la Independencia de Oaxaca&quot;,&quot;Oaxaca-San Jerónimo Tlacochahuaya&quot;,&quot;Oaxaca-Tlacolula de Matamoros&quot;,&quot;Oaxaca-Tlacotepec Plumas&quot;,&quot;Oaxaca-Tlalixtac de Cabrera&quot;,&quot;Oaxaca-Totontepec Villa de Morelos&quot;,&quot;Oaxaca-Trinidad Zaachila&quot;,&quot;Oaxaca-La Trinidad Vista Hermosa&quot;,&quot;Oaxaca-Unión Hidalgo&quot;,&quot;Oaxaca-Valerio Trujano&quot;,&quot;Oaxaca-San Juan Bautista Valle Nacional&quot;,&quot;Oaxaca-Villa Díaz Ordaz&quot;,&quot;Oaxaca-Yaxe&quot;,&quot;Oaxaca-Magdalena Yodocono de Porfirio Díaz&quot;,&quot;Oaxaca-Yogana&quot;,&quot;Oaxaca-Yutanduchi de Guerrero&quot;,&quot;Oaxaca-Villa de Zaachila&quot;,&quot;Oaxaca-San Mateo Yucutindoo&quot;,&quot;Oaxaca-Zapotitlán Lagunas&quot;,&quot;Oaxaca-Zapotitlán Palmas&quot;,&quot;Oaxaca-Santa Inés de Zaragoza&quot;,&quot;Oaxaca-Zimatlán de Álvarez&quot;,&quot;Puebla&quot;,&quot;Puebla-Acajete&quot;,&quot;Puebla-Acateno&quot;,&quot;Puebla-Acatlán&quot;,&quot;Puebla-Acatzingo&quot;,&quot;Puebla-Acteopan&quot;,&quot;Puebla-Ahuacatlán&quot;,&quot;Puebla-Ahuatlán&quot;,&quot;Puebla-Ahuazotepec&quot;,&quot;Puebla-Ahuehuetitla&quot;,&quot;Puebla-Ajalpan&quot;,&quot;Puebla-Albino Zertuche&quot;,&quot;Puebla-Aljojuca&quot;,&quot;Puebla-Altepexi&quot;,&quot;Puebla-Amixtlán&quot;,&quot;Puebla-Amozoc&quot;,&quot;Puebla-Aquixtla&quot;,&quot;Puebla-Atempan&quot;,&quot;Puebla-Atexcal&quot;,&quot;Puebla-Atlixco&quot;,&quot;Puebla-Atoyatempan&quot;,&quot;Puebla-Atzala&quot;,&quot;Puebla-Atzitzihuacán&quot;,&quot;Puebla-Atzitzintla&quot;,&quot;Puebla-Axutla&quot;,&quot;Puebla-Ayotoxco de Guerrero&quot;,&quot;Puebla-Calpan&quot;,&quot;Puebla-Caltepec&quot;,&quot;Puebla-Camocuautla&quot;,&quot;Puebla-Caxhuacan&quot;,&quot;Puebla-Coatepec&quot;,&quot;Puebla-Coatzingo&quot;,&quot;Puebla-Cohetzala&quot;,&quot;Puebla-Cohuecan&quot;,&quot;Puebla-Coronango&quot;,&quot;Puebla-Coxcatlán&quot;,&quot;Puebla-Coyomeapan&quot;,&quot;Puebla-Coyotepec&quot;,&quot;Puebla-Cuapiaxtla de Madero&quot;,&quot;Puebla-Cuautempan&quot;,&quot;Puebla-Cuautinchán&quot;,&quot;Puebla-Cuautlancingo&quot;,&quot;Puebla-Cuayuca de Andrade&quot;,&quot;Puebla-Cuetzalan del Progreso&quot;,&quot;Puebla-Cuyoaco&quot;,&quot;Puebla-Chalchicomula de Sesma&quot;,&quot;Puebla-Chapulco&quot;,&quot;Puebla-Chiautla&quot;,&quot;Puebla-Chiautzingo&quot;,&quot;Puebla-Chiconcuautla&quot;,&quot;Puebla-Chichiquila&quot;,&quot;Puebla-Chietla&quot;,&quot;Puebla-Chigmecatitlán&quot;,&quot;Puebla-Chignahuapan&quot;,&quot;Puebla-Chignautla&quot;,&quot;Puebla-Chila&quot;,&quot;Puebla-Chila de la Sal&quot;,&quot;Puebla-Honey&quot;,&quot;Puebla-Chilchotla&quot;,&quot;Puebla-Chinantla&quot;,&quot;Puebla-Domingo Arenas&quot;,&quot;Puebla-Eloxochitlán&quot;,&quot;Puebla-Epatlán&quot;,&quot;Puebla-Esperanza&quot;,&quot;Puebla-Francisco Z. Mena&quot;,&quot;Puebla-General Felipe Ángeles&quot;,&quot;Puebla-Guadalupe&quot;,&quot;Puebla-Guadalupe Victoria&quot;,&quot;Puebla-Hermenegildo Galeana&quot;,&quot;Puebla-Huaquechula&quot;,&quot;Puebla-Huatlatlauca&quot;,&quot;Puebla-Huauchinango&quot;,&quot;Puebla-Huehuetla&quot;,&quot;Puebla-Huehuetlán el Chico&quot;,&quot;Puebla-Huejotzingo&quot;,&quot;Puebla-Hueyapan&quot;,&quot;Puebla-Hueytamalco&quot;,&quot;Puebla-Hueytlalpan&quot;,&quot;Puebla-Huitzilan de Serdán&quot;,&quot;Puebla-Huitziltepec&quot;,&quot;Puebla-Atlequizayan&quot;,&quot;Puebla-Ixcamilpa de Guerrero&quot;,&quot;Puebla-Ixcaquixtla&quot;,&quot;Puebla-Ixtacamaxtitlán&quot;,&quot;Puebla-Ixtepec&quot;,&quot;Puebla-Izúcar de Matamoros&quot;,&quot;Puebla-Jalpan&quot;,&quot;Puebla-Jolalpan&quot;,&quot;Puebla-Jonotla&quot;,&quot;Puebla-Jopala&quot;,&quot;Puebla-Juan C. Bonilla&quot;,&quot;Puebla-Juan Galindo&quot;,&quot;Puebla-Juan N. Méndez&quot;,&quot;Puebla-Lafragua&quot;,&quot;Puebla-Libres&quot;,&quot;Puebla-La Magdalena Tlatlauquitepec&quot;,&quot;Puebla-Mazapiltepec de Juárez&quot;,&quot;Puebla-Mixtla&quot;,&quot;Puebla-Molcaxac&quot;,&quot;Puebla-Cañada Morelos&quot;,&quot;Puebla-Naupan&quot;,&quot;Puebla-Nauzontla&quot;,&quot;Puebla-Nealtican&quot;,&quot;Puebla-Nicolás Bravo&quot;,&quot;Puebla-Nopalucan&quot;,&quot;Puebla-Ocotepec&quot;,&quot;Puebla-Ocoyucan&quot;,&quot;Puebla-Olintla&quot;,&quot;Puebla-Oriental&quot;,&quot;Puebla-Pahuatlán&quot;,&quot;Puebla-Palmar de Bravo&quot;,&quot;Puebla-Pantepec&quot;,&quot;Puebla-Petlalcingo&quot;,&quot;Puebla-Piaxtla&quot;,&quot;Puebla-Puebla&quot;,&quot;Puebla-Quecholac&quot;,&quot;Puebla-Quimixtlán&quot;,&quot;Puebla-Rafael Lara Grajales&quot;,&quot;Puebla-Los Reyes de Juárez&quot;,&quot;Puebla-San Andrés Cholula&quot;,&quot;Puebla-San Antonio Cañada&quot;,&quot;Puebla-San Diego la Mesa Tochimiltzingo&quot;,&quot;Puebla-San Felipe Teotlalcingo&quot;,&quot;Puebla-San Felipe Tepatlán&quot;,&quot;Puebla-San Gabriel Chilac&quot;,&quot;Puebla-San Gregorio Atzompa&quot;,&quot;Puebla-San Jerónimo Tecuanipan&quot;,&quot;Puebla-San Jerónimo Xayacatlán&quot;,&quot;Puebla-San José Chiapa&quot;,&quot;Puebla-San José Miahuatlán&quot;,&quot;Puebla-San Juan Atenco&quot;,&quot;Puebla-San Juan Atzompa&quot;,&quot;Puebla-San Martín Texmelucan&quot;,&quot;Puebla-San Martín Totoltepec&quot;,&quot;Puebla-San Matías Tlalancaleca&quot;,&quot;Puebla-San Miguel Ixitlán&quot;,&quot;Puebla-San Miguel Xoxtla&quot;,&quot;Puebla-San Nicolás Buenos Aires&quot;,&quot;Puebla-San Nicolás de los Ranchos&quot;,&quot;Puebla-San Pablo Anicano&quot;,&quot;Puebla-San Pedro Cholula&quot;,&quot;Puebla-San Pedro Yeloixtlahuaca&quot;,&quot;Puebla-San Salvador el Seco&quot;,&quot;Puebla-San Salvador el Verde&quot;,&quot;Puebla-San Salvador Huixcolotla&quot;,&quot;Puebla-San Sebastián Tlacotepec&quot;,&quot;Puebla-Santa Catarina Tlaltempan&quot;,&quot;Puebla-Santa Inés Ahuatempan&quot;,&quot;Puebla-Santa Isabel Cholula&quot;,&quot;Puebla-Santiago Miahuatlán&quot;,&quot;Puebla-Huehuetlán el Grande&quot;,&quot;Puebla-Santo Tomás Hueyotlipan&quot;,&quot;Puebla-Soltepec&quot;,&quot;Puebla-Tecali de Herrera&quot;,&quot;Puebla-Tecamachalco&quot;,&quot;Puebla-Tecomatlán&quot;,&quot;Puebla-Tehuacán&quot;,&quot;Puebla-Tehuitzingo&quot;,&quot;Puebla-Tenampulco&quot;,&quot;Puebla-Teopantlán&quot;,&quot;Puebla-Teotlalco&quot;,&quot;Puebla-Tepanco de López&quot;,&quot;Puebla-Tepango de Rodríguez&quot;,&quot;Puebla-Tepatlaxco de Hidalgo&quot;,&quot;Puebla-Tepeaca&quot;,&quot;Puebla-Tepemaxalco&quot;,&quot;Puebla-Tepeojuma&quot;,&quot;Puebla-Tepetzintla&quot;,&quot;Puebla-Tepexco&quot;,&quot;Puebla-Tepexi de Rodríguez&quot;,&quot;Puebla-Tepeyahualco&quot;,&quot;Puebla-Tepeyahualco de Cuauhtémoc&quot;,&quot;Puebla-Tetela de Ocampo&quot;,&quot;Puebla-Teteles de Avila Castillo&quot;,&quot;Puebla-Teziutlán&quot;,&quot;Puebla-Tianguismanalco&quot;,&quot;Puebla-Tilapa&quot;,&quot;Puebla-Tlacotepec de Benito Juárez&quot;,&quot;Puebla-Tlacuilotepec&quot;,&quot;Puebla-Tlachichuca&quot;,&quot;Puebla-Tlahuapan&quot;,&quot;Puebla-Tlaltenango&quot;,&quot;Puebla-Tlanepantla&quot;,&quot;Puebla-Tlaola&quot;,&quot;Puebla-Tlapacoya&quot;,&quot;Puebla-Tlapanalá&quot;,&quot;Puebla-Tlatlauquitepec&quot;,&quot;Puebla-Tlaxco&quot;,&quot;Puebla-Tochimilco&quot;,&quot;Puebla-Tochtepec&quot;,&quot;Puebla-Totoltepec de Guerrero&quot;,&quot;Puebla-Tulcingo&quot;,&quot;Puebla-Tuzamapan de Galeana&quot;,&quot;Puebla-Tzicatlacoyan&quot;,&quot;Puebla-Venustiano Carranza&quot;,&quot;Puebla-Vicente Guerrero&quot;,&quot;Puebla-Xayacatlán de Bravo&quot;,&quot;Puebla-Xicotepec&quot;,&quot;Puebla-Xicotlán&quot;,&quot;Puebla-Xiutetelco&quot;,&quot;Puebla-Xochiapulco&quot;,&quot;Puebla-Xochiltepec&quot;,&quot;Puebla-Xochitlán de Vicente Suárez&quot;,&quot;Puebla-Xochitlán Todos Santos&quot;,&quot;Puebla-Yaonáhuac&quot;,&quot;Puebla-Yehualtepec&quot;,&quot;Puebla-Zacapala&quot;,&quot;Puebla-Zacapoaxtla&quot;,&quot;Puebla-Zacatlán&quot;,&quot;Puebla-Zapotitlán&quot;,&quot;Puebla-Zapotitlán de Méndez&quot;,&quot;Puebla-Zaragoza&quot;,&quot;Puebla-Zautla&quot;,&quot;Puebla-Zihuateutla&quot;,&quot;Puebla-Zinacatepec&quot;,&quot;Puebla-Zongozotla&quot;,&quot;Puebla-Zoquiapan&quot;,&quot;Puebla-Zoquitlán&quot;,&quot;Querétaro&quot;,&quot;Querétaro-Amealco de Bonfil&quot;,&quot;Querétaro-Pinal de Amoles&quot;,&quot;Querétaro-Arroyo Seco&quot;,&quot;Querétaro-Cadereyta de Montes&quot;,&quot;Querétaro-Colón&quot;,&quot;Querétaro-Corregidora&quot;,&quot;Querétaro-Ezequiel Montes&quot;,&quot;Querétaro-Huimilpan&quot;,&quot;Querétaro-Jalpan de Serra&quot;,&quot;Querétaro-Landa de Matamoros&quot;,&quot;Querétaro-El Marqués&quot;,&quot;Querétaro-Pedro Escobedo&quot;,&quot;Querétaro-Peñamiller&quot;,&quot;Querétaro-Querétaro&quot;,&quot;Querétaro-San Joaquín&quot;,&quot;Querétaro-San Juan del Río&quot;,&quot;Querétaro-Tequisquiapan&quot;,&quot;Querétaro-Tolimán&quot;,&quot;Quintana Roo&quot;,&quot;Quintana Roo-Cozumel&quot;,&quot;Quintana Roo-Felipe Carrillo Puerto&quot;,&quot;Quintana Roo-Isla Mujeres&quot;,&quot;Quintana Roo-Othón P. Blanco&quot;,&quot;Quintana Roo-Benito Juárez&quot;,&quot;Quintana Roo-José María Morelos&quot;,&quot;Quintana Roo-Lázaro Cárdenas&quot;,&quot;Quintana Roo-Solidaridad&quot;,&quot;Quintana Roo-Tulum&quot;,&quot;Quintana Roo-Bacalar&quot;,&quot;Quintana Roo-Puerto Morelos&quot;,&quot;San Luis Potosí&quot;,&quot;San Luis Potosí-Ahualulco&quot;,&quot;San Luis Potosí-Alaquines&quot;,&quot;San Luis Potosí-Aquismón&quot;,&quot;San Luis Potosí-Armadillo de los Infante&quot;,&quot;San Luis Potosí-Cárdenas&quot;,&quot;San Luis Potosí-Catorce&quot;,&quot;San Luis Potosí-Cedral&quot;,&quot;San Luis Potosí-Cerritos&quot;,&quot;San Luis Potosí-Cerro de San Pedro&quot;,&quot;San Luis Potosí-Ciudad del Maíz&quot;,&quot;San Luis Potosí-Ciudad Fernández&quot;,&quot;San Luis Potosí-Tancanhuitz&quot;,&quot;San Luis Potosí-Ciudad Valles&quot;,&quot;San Luis Potosí-Coxcatlán&quot;,&quot;San Luis Potosí-Charcas&quot;,&quot;San Luis Potosí-Ebano&quot;,&quot;San Luis Potosí-Guadalcázar&quot;,&quot;San Luis Potosí-Huehuetlán&quot;,&quot;San Luis Potosí-Lagunillas&quot;,&quot;San Luis Potosí-Matehuala&quot;,&quot;San Luis Potosí-Mexquitic de Carmona&quot;,&quot;San Luis Potosí-Moctezuma&quot;,&quot;San Luis Potosí-Rayón&quot;,&quot;San Luis Potosí-Rioverde&quot;,&quot;San Luis Potosí-Salinas&quot;,&quot;San Luis Potosí-San Antonio&quot;,&quot;San Luis Potosí-San Ciro de Acosta&quot;,&quot;San Luis Potosí-San Luis Potosí&quot;,&quot;San Luis Potosí-San Martín Chalchicuautla&quot;,&quot;San Luis Potosí-San Nicolás Tolentino&quot;,&quot;San Luis Potosí-Santa Catarina&quot;,&quot;San Luis Potosí-Santa María del Río&quot;,&quot;San Luis Potosí-Santo Domingo&quot;,&quot;San Luis Potosí-San Vicente Tancuayalab&quot;,&quot;San Luis Potosí-Soledad de Graciano Sánchez&quot;,&quot;San Luis Potosí-Tamasopo&quot;,&quot;San Luis Potosí-Tamazunchale&quot;,&quot;San Luis Potosí-Tampacán&quot;,&quot;San Luis Potosí-Tampamolón Corona&quot;,&quot;San Luis Potosí-Tamuín&quot;,&quot;San Luis Potosí-Tanlajás&quot;,&quot;San Luis Potosí-Tanquián de Escobedo&quot;,&quot;San Luis Potosí-Tierra Nueva&quot;,&quot;San Luis Potosí-Vanegas&quot;,&quot;San Luis Potosí-Venado&quot;,&quot;San Luis Potosí-Villa de Arriaga&quot;,&quot;San Luis Potosí-Villa de Guadalupe&quot;,&quot;San Luis Potosí-Villa de la Paz&quot;,&quot;San Luis Potosí-Villa de Ramos&quot;,&quot;San Luis Potosí-Villa de Reyes&quot;,&quot;San Luis Potosí-Villa Hidalgo&quot;,&quot;San Luis Potosí-Villa Juárez&quot;,&quot;San Luis Potosí-Axtla de Terrazas&quot;,&quot;San Luis Potosí-Xilitla&quot;,&quot;San Luis Potosí-Zaragoza&quot;,&quot;San Luis Potosí-Villa de Arista&quot;,&quot;San Luis Potosí-Matlapa&quot;,&quot;San Luis Potosí-El Naranjo&quot;,&quot;Sinaloa&quot;,&quot;Sinaloa-Ahome&quot;,&quot;Sinaloa-Angostura&quot;,&quot;Sinaloa-Badiraguato&quot;,&quot;Sinaloa-Concordia&quot;,&quot;Sinaloa-Cosalá&quot;,&quot;Sinaloa-Culiacán&quot;,&quot;Sinaloa-Choix&quot;,&quot;Sinaloa-Elota&quot;,&quot;Sinaloa-Escuinapa&quot;,&quot;Sinaloa-El Fuerte&quot;,&quot;Sinaloa-Guasave&quot;,&quot;Sinaloa-Mazatlán&quot;,&quot;Sinaloa-Mocorito&quot;,&quot;Sinaloa-Rosario&quot;,&quot;Sinaloa-Salvador Alvarado&quot;,&quot;Sinaloa-San Ignacio&quot;,&quot;Sinaloa-Sinaloa&quot;,&quot;Sinaloa-Navolato&quot;,&quot;Sonora&quot;,&quot;Sonora-Aconchi&quot;,&quot;Sonora-Agua Prieta&quot;,&quot;Sonora-Alamos&quot;,&quot;Sonora-Altar&quot;,&quot;Sonora-Arivechi&quot;,&quot;Sonora-Arizpe&quot;,&quot;Sonora-Atil&quot;,&quot;Sonora-Bacadéhuachi&quot;,&quot;Sonora-Bacanora&quot;,&quot;Sonora-Bacerac&quot;,&quot;Sonora-Bacoachi&quot;,&quot;Sonora-Bácum&quot;,&quot;Sonora-Banámichi&quot;,&quot;Sonora-Baviácora&quot;,&quot;Sonora-Bavispe&quot;,&quot;Sonora-Benjamín Hill&quot;,&quot;Sonora-Caborca&quot;,&quot;Sonora-Cajeme&quot;,&quot;Sonora-Cananea&quot;,&quot;Sonora-Carbó&quot;,&quot;Sonora-La Colorada&quot;,&quot;Sonora-Cucurpe&quot;,&quot;Sonora-Cumpas&quot;,&quot;Sonora-Divisaderos&quot;,&quot;Sonora-Empalme&quot;,&quot;Sonora-Etchojoa&quot;,&quot;Sonora-Fronteras&quot;,&quot;Sonora-Granados&quot;,&quot;Sonora-Guaymas&quot;,&quot;Sonora-Hermosillo&quot;,&quot;Sonora-Huachinera&quot;,&quot;Sonora-Huásabas&quot;,&quot;Sonora-Huatabampo&quot;,&quot;Sonora-Huépac&quot;,&quot;Sonora-Imuris&quot;,&quot;Sonora-Magdalena&quot;,&quot;Sonora-Mazatán&quot;,&quot;Sonora-Moctezuma&quot;,&quot;Sonora-Naco&quot;,&quot;Sonora-Nácori Chico&quot;,&quot;Sonora-Nacozari de García&quot;,&quot;Sonora-Navojoa&quot;,&quot;Sonora-Nogales&quot;,&quot;Sonora-Onavas&quot;,&quot;Sonora-Opodepe&quot;,&quot;Sonora-Oquitoa&quot;,&quot;Sonora-Pitiquito&quot;,&quot;Sonora-Puerto Peñasco&quot;,&quot;Sonora-Quiriego&quot;,&quot;Sonora-Rayón&quot;,&quot;Sonora-Rosario&quot;,&quot;Sonora-Sahuaripa&quot;,&quot;Sonora-San Felipe de Jesús&quot;,&quot;Sonora-San Javier&quot;,&quot;Sonora-San Luis Río Colorado&quot;,&quot;Sonora-San Miguel de Horcasitas&quot;,&quot;Sonora-San Pedro de la Cueva&quot;,&quot;Sonora-Santa Ana&quot;,&quot;Sonora-Santa Cruz&quot;,&quot;Sonora-Sáric&quot;,&quot;Sonora-Soyopa&quot;,&quot;Sonora-Suaqui Grande&quot;,&quot;Sonora-Tepache&quot;,&quot;Sonora-Trincheras&quot;,&quot;Sonora-Tubutama&quot;,&quot;Sonora-Ures&quot;,&quot;Sonora-Villa Hidalgo&quot;,&quot;Sonora-Villa Pesqueira&quot;,&quot;Sonora-Yécora&quot;,&quot;Sonora-General Plutarco Elías Calles&quot;,&quot;Sonora-Benito Juárez&quot;,&quot;Sonora-San Ignacio Río Muerto&quot;,&quot;Tabasco&quot;,&quot;Tabasco-Balancán&quot;,&quot;Tabasco-Cárdenas&quot;,&quot;Tabasco-Centla&quot;,&quot;Tabasco-Centro&quot;,&quot;Tabasco-Comalcalco&quot;,&quot;Tabasco-Cunduacán&quot;,&quot;Tabasco-Emiliano Zapata&quot;,&quot;Tabasco-Huimanguillo&quot;,&quot;Tabasco-Jalapa&quot;,&quot;Tabasco-Jalpa de Méndez&quot;,&quot;Tabasco-Jonuta&quot;,&quot;Tabasco-Macuspana&quot;,&quot;Tabasco-Nacajuca&quot;,&quot;Tabasco-Paraíso&quot;,&quot;Tabasco-Tacotalpa&quot;,&quot;Tabasco-Teapa&quot;,&quot;Tabasco-Tenosique&quot;,&quot;Tamaulipas&quot;,&quot;Tamaulipas-Abasolo&quot;,&quot;Tamaulipas-Aldama&quot;,&quot;Tamaulipas-Altamira&quot;,&quot;Tamaulipas-Antiguo Morelos&quot;,&quot;Tamaulipas-Burgos&quot;,&quot;Tamaulipas-Bustamante&quot;,&quot;Tamaulipas-Camargo&quot;,&quot;Tamaulipas-Casas&quot;,&quot;Tamaulipas-Ciudad Madero&quot;,&quot;Tamaulipas-Cruillas&quot;,&quot;Tamaulipas-Gómez Farías&quot;,&quot;Tamaulipas-González&quot;,&quot;Tamaulipas-Güémez&quot;,&quot;Tamaulipas-Guerrero&quot;,&quot;Tamaulipas-Gustavo Díaz Ordaz&quot;,&quot;Tamaulipas-Hidalgo&quot;,&quot;Tamaulipas-Jaumave&quot;,&quot;Tamaulipas-Jiménez&quot;,&quot;Tamaulipas-Llera&quot;,&quot;Tamaulipas-Mainero&quot;,&quot;Tamaulipas-El Mante&quot;,&quot;Tamaulipas-Matamoros&quot;,&quot;Tamaulipas-Méndez&quot;,&quot;Tamaulipas-Mier&quot;,&quot;Tamaulipas-Miguel Alemán&quot;,&quot;Tamaulipas-Miquihuana&quot;,&quot;Tamaulipas-Nuevo Laredo&quot;,&quot;Tamaulipas-Nuevo Morelos&quot;,&quot;Tamaulipas-Ocampo&quot;,&quot;Tamaulipas-Padilla&quot;,&quot;Tamaulipas-Palmillas&quot;,&quot;Tamaulipas-Reynosa&quot;,&quot;Tamaulipas-Río Bravo&quot;,&quot;Tamaulipas-San Carlos&quot;,&quot;Tamaulipas-San Fernando&quot;,&quot;Tamaulipas-San Nicolás&quot;,&quot;Tamaulipas-Soto la Marina&quot;,&quot;Tamaulipas-Tampico&quot;,&quot;Tamaulipas-Tula&quot;,&quot;Tamaulipas-Valle Hermoso&quot;,&quot;Tamaulipas-Victoria&quot;,&quot;Tamaulipas-Villagrán&quot;,&quot;Tamaulipas-Xicoténcatl&quot;,&quot;Tlaxcala&quot;,&quot;Tlaxcala-Amaxac de Guerrero&quot;,&quot;Tlaxcala-Apetatitlán de Antonio Carvajal&quot;,&quot;Tlaxcala-Atlangatepec&quot;,&quot;Tlaxcala-Atltzayanca&quot;,&quot;Tlaxcala-Apizaco&quot;,&quot;Tlaxcala-Calpulalpan&quot;,&quot;Tlaxcala-El Carmen Tequexquitla&quot;,&quot;Tlaxcala-Cuapiaxtla&quot;,&quot;Tlaxcala-Cuaxomulco&quot;,&quot;Tlaxcala-Chiautempan&quot;,&quot;Tlaxcala-Muñoz de Domingo Arenas&quot;,&quot;Tlaxcala-Españita&quot;,&quot;Tlaxcala-Huamantla&quot;,&quot;Tlaxcala-Hueyotlipan&quot;,&quot;Tlaxcala-Ixtacuixtla de Mariano Matamoros&quot;,&quot;Tlaxcala-Ixtenco&quot;,&quot;Tlaxcala-Mazatecochco de José María Morelos&quot;,&quot;Tlaxcala-Contla de Juan Cuamatzi&quot;,&quot;Tlaxcala-Tepetitla de Lardizábal&quot;,&quot;Tlaxcala-Sanctórum de Lázaro Cárdenas&quot;,&quot;Tlaxcala-Nanacamilpa de Mariano Arista&quot;,&quot;Tlaxcala-Acuamanala de Miguel Hidalgo&quot;,&quot;Tlaxcala-Natívitas&quot;,&quot;Tlaxcala-Panotla&quot;,&quot;Tlaxcala-San Pablo del Monte&quot;,&quot;Tlaxcala-Santa Cruz Tlaxcala&quot;,&quot;Tlaxcala-Tenancingo&quot;,&quot;Tlaxcala-Teolocholco&quot;,&quot;Tlaxcala-Tepeyanco&quot;,&quot;Tlaxcala-Terrenate&quot;,&quot;Tlaxcala-Tetla de la Solidaridad&quot;,&quot;Tlaxcala-Tetlatlahuca&quot;,&quot;Tlaxcala-Tlaxcala&quot;,&quot;Tlaxcala-Tlaxco&quot;,&quot;Tlaxcala-Tocatlán&quot;,&quot;Tlaxcala-Totolac&quot;,&quot;Tlaxcala-Ziltlaltépec de Trinidad Sánchez Santos&quot;,&quot;Tlaxcala-Tzompantepec&quot;,&quot;Tlaxcala-Xaloztoc&quot;,&quot;Tlaxcala-Xaltocan&quot;,&quot;Tlaxcala-Papalotla de Xicohténcatl&quot;,&quot;Tlaxcala-Xicohtzinco&quot;,&quot;Tlaxcala-Yauhquemehcan&quot;,&quot;Tlaxcala-Zacatelco&quot;,&quot;Tlaxcala-Benito Juárez&quot;,&quot;Tlaxcala-Emiliano Zapata&quot;,&quot;Tlaxcala-Lázaro Cárdenas&quot;,&quot;Tlaxcala-La Magdalena Tlaltelulco&quot;,&quot;Tlaxcala-San Damián Texóloc&quot;,&quot;Tlaxcala-San Francisco Tetlanohcan&quot;,&quot;Tlaxcala-San Jerónimo Zacualpan&quot;,&quot;Tlaxcala-San José Teacalco&quot;,&quot;Tlaxcala-San Juan Huactzinco&quot;,&quot;Tlaxcala-San Lorenzo Axocomanitla&quot;,&quot;Tlaxcala-San Lucas Tecopilco&quot;,&quot;Tlaxcala-Santa Ana Nopalucan&quot;,&quot;Tlaxcala-Santa Apolonia Teacalco&quot;,&quot;Tlaxcala-Santa Catarina Ayometla&quot;,&quot;Tlaxcala-Santa Cruz Quilehtla&quot;,&quot;Tlaxcala-Santa Isabel Xiloxoxtla&quot;,&quot;Veracruz de Ignacio de la Llave&quot;,&quot;Veracruz de Ignacio de la Llave-Acajete&quot;,&quot;Veracruz de Ignacio de la Llave-Acatlán&quot;,&quot;Veracruz de Ignacio de la Llave-Acayucan&quot;,&quot;Veracruz de Ignacio de la Llave-Actopan&quot;,&quot;Veracruz de Ignacio de la Llave-Acula&quot;,&quot;Veracruz de Ignacio de la Llave-Acultzingo&quot;,&quot;Veracruz de Ignacio de la Llave-Camarón de Tejeda&quot;,&quot;Veracruz de Ignacio de la Llave-Alpatláhuac&quot;,&quot;Veracruz de Ignacio de la Llave-Alto Lucero de Gutiérrez Barrios&quot;,&quot;Veracruz de Ignacio de la Llave-Altotonga&quot;,&quot;Veracruz de Ignacio de la Llave-Alvarado&quot;,&quot;Veracruz de Ignacio de la Llave-Amatitlán&quot;,&quot;Veracruz de Ignacio de la Llave-Naranjos Amatlán&quot;,&quot;Veracruz de Ignacio de la Llave-Amatlán de los Reyes&quot;,&quot;Veracruz de Ignacio de la Llave-Angel R. Cabada&quot;,&quot;Veracruz de Ignacio de la Llave-La Antigua&quot;,&quot;Veracruz de Ignacio de la Llave-Apazapan&quot;,&quot;Veracruz de Ignacio de la Llave-Aquila&quot;,&quot;Veracruz de Ignacio de la Llave-Astacinga&quot;,&quot;Veracruz de Ignacio de la Llave-Atlahuilco&quot;,&quot;Veracruz de Ignacio de la Llave-Atoyac&quot;,&quot;Veracruz de Ignacio de la Llave-Atzacan&quot;,&quot;Veracruz de Ignacio de la Llave-Atzalan&quot;,&quot;Veracruz de Ignacio de la Llave-Tlaltetela&quot;,&quot;Veracruz de Ignacio de la Llave-Ayahualulco&quot;,&quot;Veracruz de Ignacio de la Llave-Banderilla&quot;,&quot;Veracruz de Ignacio de la Llave-Benito Juárez&quot;,&quot;Veracruz de Ignacio de la Llave-Boca del Río&quot;,&quot;Veracruz de Ignacio de la Llave-Calcahualco&quot;,&quot;Veracruz de Ignacio de la Llave-Camerino Z. Mendoza&quot;,&quot;Veracruz de Ignacio de la Llave-Carrillo Puerto&quot;,&quot;Veracruz de Ignacio de la Llave-Catemaco&quot;,&quot;Veracruz de Ignacio de la Llave-Cazones de Herrera&quot;,&quot;Veracruz de Ignacio de la Llave-Cerro Azul&quot;,&quot;Veracruz de Ignacio de la Llave-Citlaltépetl&quot;,&quot;Veracruz de Ignacio de la Llave-Coacoatzintla&quot;,&quot;Veracruz de Ignacio de la Llave-Coahuitlán&quot;,&quot;Veracruz de Ignacio de la Llave-Coatepec&quot;,&quot;Veracruz de Ignacio de la Llave-Coatzacoalcos&quot;,&quot;Veracruz de Ignacio de la Llave-Coatzintla&quot;,&quot;Veracruz de Ignacio de la Llave-Coetzala&quot;,&quot;Veracruz de Ignacio de la Llave-Colipa&quot;,&quot;Veracruz de Ignacio de la Llave-Comapa&quot;,&quot;Veracruz de Ignacio de la Llave-Córdoba&quot;,&quot;Veracruz de Ignacio de la Llave-Cosamaloapan de Carpio&quot;,&quot;Veracruz de Ignacio de la Llave-Cosautlán de Carvajal&quot;,&quot;Veracruz de Ignacio de la Llave-Coscomatepec&quot;,&quot;Veracruz de Ignacio de la Llave-Cosoleacaque&quot;,&quot;Veracruz de Ignacio de la Llave-Cotaxtla&quot;,&quot;Veracruz de Ignacio de la Llave-Coxquihui&quot;,&quot;Veracruz de Ignacio de la Llave-Coyutla&quot;,&quot;Veracruz de Ignacio de la Llave-Cuichapa&quot;,&quot;Veracruz de Ignacio de la Llave-Cuitláhuac&quot;,&quot;Veracruz de Ignacio de la Llave-Chacaltianguis&quot;,&quot;Veracruz de Ignacio de la Llave-Chalma&quot;,&quot;Veracruz de Ignacio de la Llave-Chiconamel&quot;,&quot;Veracruz de Ignacio de la Llave-Chiconquiaco&quot;,&quot;Veracruz de Ignacio de la Llave-Chicontepec&quot;,&quot;Veracruz de Ignacio de la Llave-Chinameca&quot;,&quot;Veracruz de Ignacio de la Llave-Chinampa de Gorostiza&quot;,&quot;Veracruz de Ignacio de la Llave-Las Choapas&quot;,&quot;Veracruz de Ignacio de la Llave-Chocamán&quot;,&quot;Veracruz de Ignacio de la Llave-Chontla&quot;,&quot;Veracruz de Ignacio de la Llave-Chumatlán&quot;,&quot;Veracruz de Ignacio de la Llave-Emiliano Zapata&quot;,&quot;Veracruz de Ignacio de la Llave-Espinal&quot;,&quot;Veracruz de Ignacio de la Llave-Filomeno Mata&quot;,&quot;Veracruz de Ignacio de la Llave-Fortín&quot;,&quot;Veracruz de Ignacio de la Llave-Gutiérrez Zamora&quot;,&quot;Veracruz de Ignacio de la Llave-Hidalgotitlán&quot;,&quot;Veracruz de Ignacio de la Llave-Huatusco&quot;,&quot;Veracruz de Ignacio de la Llave-Huayacocotla&quot;,&quot;Veracruz de Ignacio de la Llave-Hueyapan de Ocampo&quot;,&quot;Veracruz de Ignacio de la Llave-Huiloapan de Cuauhtémoc&quot;,&quot;Veracruz de Ignacio de la Llave-Ignacio de la Llave&quot;,&quot;Veracruz de Ignacio de la Llave-Ilamatlán&quot;,&quot;Veracruz de Ignacio de la Llave-Isla&quot;,&quot;Veracruz de Ignacio de la Llave-Ixcatepec&quot;,&quot;Veracruz de Ignacio de la Llave-Ixhuacán de los Reyes&quot;,&quot;Veracruz de Ignacio de la Llave-Ixhuatlán del Café&quot;,&quot;Veracruz de Ignacio de la Llave-Ixhuatlancillo&quot;,&quot;Veracruz de Ignacio de la Llave-Ixhuatlán del Sureste&quot;,&quot;Veracruz de Ignacio de la Llave-Ixhuatlán de Madero&quot;,&quot;Veracruz de Ignacio de la Llave-Ixmatlahuacan&quot;,&quot;Veracruz de Ignacio de la Llave-Ixtaczoquitlán&quot;,&quot;Veracruz de Ignacio de la Llave-Jalacingo&quot;,&quot;Veracruz de Ignacio de la Llave-Xalapa&quot;,&quot;Veracruz de Ignacio de la Llave-Jalcomulco&quot;,&quot;Veracruz de Ignacio de la Llave-Jáltipan&quot;,&quot;Veracruz de Ignacio de la Llave-Jamapa&quot;,&quot;Veracruz de Ignacio de la Llave-Jesús Carranza&quot;,&quot;Veracruz de Ignacio de la Llave-Xico&quot;,&quot;Veracruz de Ignacio de la Llave-Jilotepec&quot;,&quot;Veracruz de Ignacio de la Llave-Juan Rodríguez Clara&quot;,&quot;Veracruz de Ignacio de la Llave-Juchique de Ferrer&quot;,&quot;Veracruz de Ignacio de la Llave-Landero y Coss&quot;,&quot;Veracruz de Ignacio de la Llave-Lerdo de Tejada&quot;,&quot;Veracruz de Ignacio de la Llave-Magdalena&quot;,&quot;Veracruz de Ignacio de la Llave-Maltrata&quot;,&quot;Veracruz de Ignacio de la Llave-Manlio Fabio Altamirano&quot;,&quot;Veracruz de Ignacio de la Llave-Mariano Escobedo&quot;,&quot;Veracruz de Ignacio de la Llave-Martínez de la Torre&quot;,&quot;Veracruz de Ignacio de la Llave-Mecatlán&quot;,&quot;Veracruz de Ignacio de la Llave-Mecayapan&quot;,&quot;Veracruz de Ignacio de la Llave-Medellín de Bravo&quot;,&quot;Veracruz de Ignacio de la Llave-Miahuatlán&quot;,&quot;Veracruz de Ignacio de la Llave-Las Minas&quot;,&quot;Veracruz de Ignacio de la Llave-Minatitlán&quot;,&quot;Veracruz de Ignacio de la Llave-Misantla&quot;,&quot;Veracruz de Ignacio de la Llave-Mixtla de Altamirano&quot;,&quot;Veracruz de Ignacio de la Llave-Moloacán&quot;,&quot;Veracruz de Ignacio de la Llave-Naolinco&quot;,&quot;Veracruz de Ignacio de la Llave-Naranjal&quot;,&quot;Veracruz de Ignacio de la Llave-Nautla&quot;,&quot;Veracruz de Ignacio de la Llave-Nogales&quot;,&quot;Veracruz de Ignacio de la Llave-Oluta&quot;,&quot;Veracruz de Ignacio de la Llave-Omealca&quot;,&quot;Veracruz de Ignacio de la Llave-Orizaba&quot;,&quot;Veracruz de Ignacio de la Llave-Otatitlán&quot;,&quot;Veracruz de Ignacio de la Llave-Oteapan&quot;,&quot;Veracruz de Ignacio de la Llave-Ozuluama de Mascareñas&quot;,&quot;Veracruz de Ignacio de la Llave-Pajapan&quot;,&quot;Veracruz de Ignacio de la Llave-Pánuco&quot;,&quot;Veracruz de Ignacio de la Llave-Papantla&quot;,&quot;Veracruz de Ignacio de la Llave-Paso del Macho&quot;,&quot;Veracruz de Ignacio de la Llave-Paso de Ovejas&quot;,&quot;Veracruz de Ignacio de la Llave-La Perla&quot;,&quot;Veracruz de Ignacio de la Llave-Perote&quot;,&quot;Veracruz de Ignacio de la Llave-Platón Sánchez&quot;,&quot;Veracruz de Ignacio de la Llave-Playa Vicente&quot;,&quot;Veracruz de Ignacio de la Llave-Poza Rica de Hidalgo&quot;,&quot;Veracruz de Ignacio de la Llave-Las Vigas de Ramírez&quot;,&quot;Veracruz de Ignacio de la Llave-Pueblo Viejo&quot;,&quot;Veracruz de Ignacio de la Llave-Puente Nacional&quot;,&quot;Veracruz de Ignacio de la Llave-Rafael Delgado&quot;,&quot;Veracruz de Ignacio de la Llave-Rafael Lucio&quot;,&quot;Veracruz de Ignacio de la Llave-Los Reyes&quot;,&quot;Veracruz de Ignacio de la Llave-Río Blanco&quot;,&quot;Veracruz de Ignacio de la Llave-Saltabarranca&quot;,&quot;Veracruz de Ignacio de la Llave-San Andrés Tenejapan&quot;,&quot;Veracruz de Ignacio de la Llave-San Andrés Tuxtla&quot;,&quot;Veracruz de Ignacio de la Llave-San Juan Evangelista&quot;,&quot;Veracruz de Ignacio de la Llave-Santiago Tuxtla&quot;,&quot;Veracruz de Ignacio de la Llave-Sayula de Alemán&quot;,&quot;Veracruz de Ignacio de la Llave-Soconusco&quot;,&quot;Veracruz de Ignacio de la Llave-Sochiapa&quot;,&quot;Veracruz de Ignacio de la Llave-Soledad Atzompa&quot;,&quot;Veracruz de Ignacio de la Llave-Soledad de Doblado&quot;,&quot;Veracruz de Ignacio de la Llave-Soteapan&quot;,&quot;Veracruz de Ignacio de la Llave-Tamalín&quot;,&quot;Veracruz de Ignacio de la Llave-Tamiahua&quot;,&quot;Veracruz de Ignacio de la Llave-Tampico Alto&quot;,&quot;Veracruz de Ignacio de la Llave-Tancoco&quot;,&quot;Veracruz de Ignacio de la Llave-Tantima&quot;,&quot;Veracruz de Ignacio de la Llave-Tantoyuca&quot;,&quot;Veracruz de Ignacio de la Llave-Tatatila&quot;,&quot;Veracruz de Ignacio de la Llave-Castillo de Teayo&quot;,&quot;Veracruz de Ignacio de la Llave-Tecolutla&quot;,&quot;Veracruz de Ignacio de la Llave-Tehuipango&quot;,&quot;Veracruz de Ignacio de la Llave-Álamo Temapache&quot;,&quot;Veracruz de Ignacio de la Llave-Tempoal&quot;,&quot;Veracruz de Ignacio de la Llave-Tenampa&quot;,&quot;Veracruz de Ignacio de la Llave-Tenochtitlán&quot;,&quot;Veracruz de Ignacio de la Llave-Teocelo&quot;,&quot;Veracruz de Ignacio de la Llave-Tepatlaxco&quot;,&quot;Veracruz de Ignacio de la Llave-Tepetlán&quot;,&quot;Veracruz de Ignacio de la Llave-Tepetzintla&quot;,&quot;Veracruz de Ignacio de la Llave-Tequila&quot;,&quot;Veracruz de Ignacio de la Llave-José Azueta&quot;,&quot;Veracruz de Ignacio de la Llave-Texcatepec&quot;,&quot;Veracruz de Ignacio de la Llave-Texhuacán&quot;,&quot;Veracruz de Ignacio de la Llave-Texistepec&quot;,&quot;Veracruz de Ignacio de la Llave-Tezonapa&quot;,&quot;Veracruz de Ignacio de la Llave-Tierra Blanca&quot;,&quot;Veracruz de Ignacio de la Llave-Tihuatlán&quot;,&quot;Veracruz de Ignacio de la Llave-Tlacojalpan&quot;,&quot;Veracruz de Ignacio de la Llave-Tlacolulan&quot;,&quot;Veracruz de Ignacio de la Llave-Tlacotalpan&quot;,&quot;Veracruz de Ignacio de la Llave-Tlacotepec de Mejía&quot;,&quot;Veracruz de Ignacio de la Llave-Tlachichilco&quot;,&quot;Veracruz de Ignacio de la Llave-Tlalixcoyan&quot;,&quot;Veracruz de Ignacio de la Llave-Tlalnelhuayocan&quot;,&quot;Veracruz de Ignacio de la Llave-Tlapacoyan&quot;,&quot;Veracruz de Ignacio de la Llave-Tlaquilpa&quot;,&quot;Veracruz de Ignacio de la Llave-Tlilapan&quot;,&quot;Veracruz de Ignacio de la Llave-Tomatlán&quot;,&quot;Veracruz de Ignacio de la Llave-Tonayán&quot;,&quot;Veracruz de Ignacio de la Llave-Totutla&quot;,&quot;Veracruz de Ignacio de la Llave-Tuxpan&quot;,&quot;Veracruz de Ignacio de la Llave-Tuxtilla&quot;,&quot;Veracruz de Ignacio de la Llave-Ursulo Galván&quot;,&quot;Veracruz de Ignacio de la Llave-Vega de Alatorre&quot;,&quot;Veracruz de Ignacio de la Llave-Veracruz&quot;,&quot;Veracruz de Ignacio de la Llave-Villa Aldama&quot;,&quot;Veracruz de Ignacio de la Llave-Xoxocotla&quot;,&quot;Veracruz de Ignacio de la Llave-Yanga&quot;,&quot;Veracruz de Ignacio de la Llave-Yecuatla&quot;,&quot;Veracruz de Ignacio de la Llave-Zacualpan&quot;,&quot;Veracruz de Ignacio de la Llave-Zaragoza&quot;,&quot;Veracruz de Ignacio de la Llave-Zentla&quot;,&quot;Veracruz de Ignacio de la Llave-Zongolica&quot;,&quot;Veracruz de Ignacio de la Llave-Zontecomatlán de López y Fuentes&quot;,&quot;Veracruz de Ignacio de la Llave-Zozocolco de Hidalgo&quot;,&quot;Veracruz de Ignacio de la Llave-Agua Dulce&quot;,&quot;Veracruz de Ignacio de la Llave-El Higo&quot;,&quot;Veracruz de Ignacio de la Llave-Nanchital de Lázaro Cárdenas del Río&quot;,&quot;Veracruz de Ignacio de la Llave-Tres Valles&quot;,&quot;Veracruz de Ignacio de la Llave-Carlos A. Carrillo&quot;,&quot;Veracruz de Ignacio de la Llave-Tatahuicapan de Juárez&quot;,&quot;Veracruz de Ignacio de la Llave-Uxpanapa&quot;,&quot;Veracruz de Ignacio de la Llave-San Rafael&quot;,&quot;Veracruz de Ignacio de la Llave-Santiago Sochiapan&quot;,&quot;Yucatán&quot;,&quot;Yucatán-Abalá&quot;,&quot;Yucatán-Acanceh&quot;,&quot;Yucatán-Akil&quot;,&quot;Yucatán-Baca&quot;,&quot;Yucatán-Bokobá&quot;,&quot;Yucatán-Buctzotz&quot;,&quot;Yucatán-Cacalchén&quot;,&quot;Yucatán-Calotmul&quot;,&quot;Yucatán-Cansahcab&quot;,&quot;Yucatán-Cantamayec&quot;,&quot;Yucatán-Celestún&quot;,&quot;Yucatán-Cenotillo&quot;,&quot;Yucatán-Conkal&quot;,&quot;Yucatán-Cuncunul&quot;,&quot;Yucatán-Cuzamá&quot;,&quot;Yucatán-Chacsinkín&quot;,&quot;Yucatán-Chankom&quot;,&quot;Yucatán-Chapab&quot;,&quot;Yucatán-Chemax&quot;,&quot;Yucatán-Chicxulub Pueblo&quot;,&quot;Yucatán-Chichimilá&quot;,&quot;Yucatán-Chikindzonot&quot;,&quot;Yucatán-Chocholá&quot;,&quot;Yucatán-Chumayel&quot;,&quot;Yucatán-Dzán&quot;,&quot;Yucatán-Dzemul&quot;,&quot;Yucatán-Dzidzantún&quot;,&quot;Yucatán-Dzilam de Bravo&quot;,&quot;Yucatán-Dzilam González&quot;,&quot;Yucatán-Dzitás&quot;,&quot;Yucatán-Dzoncauich&quot;,&quot;Yucatán-Espita&quot;,&quot;Yucatán-Halachó&quot;,&quot;Yucatán-Hocabá&quot;,&quot;Yucatán-Hoctún&quot;,&quot;Yucatán-Homún&quot;,&quot;Yucatán-Huhí&quot;,&quot;Yucatán-Hunucmá&quot;,&quot;Yucatán-Ixil&quot;,&quot;Yucatán-Izamal&quot;,&quot;Yucatán-Kanasín&quot;,&quot;Yucatán-Kantunil&quot;,&quot;Yucatán-Kaua&quot;,&quot;Yucatán-Kinchil&quot;,&quot;Yucatán-Kopomá&quot;,&quot;Yucatán-Mama&quot;,&quot;Yucatán-Maní&quot;,&quot;Yucatán-Maxcanú&quot;,&quot;Yucatán-Mayapán&quot;,&quot;Yucatán-Mérida&quot;,&quot;Yucatán-Mocochá&quot;,&quot;Yucatán-Motul&quot;,&quot;Yucatán-Muna&quot;,&quot;Yucatán-Muxupip&quot;,&quot;Yucatán-Opichén&quot;,&quot;Yucatán-Oxkutzcab&quot;,&quot;Yucatán-Panabá&quot;,&quot;Yucatán-Peto&quot;,&quot;Yucatán-Progreso&quot;,&quot;Yucatán-Quintana Roo&quot;,&quot;Yucatán-Río Lagartos&quot;,&quot;Yucatán-Sacalum&quot;,&quot;Yucatán-Samahil&quot;,&quot;Yucatán-Sanahcat&quot;,&quot;Yucatán-San Felipe&quot;,&quot;Yucatán-Santa Elena&quot;,&quot;Yucatán-Seyé&quot;,&quot;Yucatán-Sinanché&quot;,&quot;Yucatán-Sotuta&quot;,&quot;Yucatán-Sucilá&quot;,&quot;Yucatán-Sudzal&quot;,&quot;Yucatán-Suma&quot;,&quot;Yucatán-Tahdziú&quot;,&quot;Yucatán-Tahmek&quot;,&quot;Yucatán-Teabo&quot;,&quot;Yucatán-Tecoh&quot;,&quot;Yucatán-Tekal de Venegas&quot;,&quot;Yucatán-Tekantó&quot;,&quot;Yucatán-Tekax&quot;,&quot;Yucatán-Tekit&quot;,&quot;Yucatán-Tekom&quot;,&quot;Yucatán-Telchac Pueblo&quot;,&quot;Yucatán-Telchac Puerto&quot;,&quot;Yucatán-Temax&quot;,&quot;Yucatán-Temozón&quot;,&quot;Yucatán-Tepakán&quot;,&quot;Yucatán-Tetiz&quot;,&quot;Yucatán-Teya&quot;,&quot;Yucatán-Ticul&quot;,&quot;Yucatán-Timucuy&quot;,&quot;Yucatán-Tinum&quot;,&quot;Yucatán-Tixcacalcupul&quot;,&quot;Yucatán-Tixkokob&quot;,&quot;Yucatán-Tixmehuac&quot;,&quot;Yucatán-Tixpéhual&quot;,&quot;Yucatán-Tizimín&quot;,&quot;Yucatán-Tunkás&quot;,&quot;Yucatán-Tzucacab&quot;,&quot;Yucatán-Uayma&quot;,&quot;Yucatán-Ucú&quot;,&quot;Yucatán-Umán&quot;,&quot;Yucatán-Valladolid&quot;,&quot;Yucatán-Xocchel&quot;,&quot;Yucatán-Yaxcabá&quot;,&quot;Yucatán-Yaxkukul&quot;,&quot;Yucatán-Yobaín&quot;,&quot;Zacatecas&quot;,&quot;Zacatecas-Apozol&quot;,&quot;Zacatecas-Apulco&quot;,&quot;Zacatecas-Atolinga&quot;,&quot;Zacatecas-Benito Juárez&quot;,&quot;Zacatecas-Calera&quot;,&quot;Zacatecas-Cañitas de Felipe Pescador&quot;,&quot;Zacatecas-Concepción del Oro&quot;,&quot;Zacatecas-Cuauhtémoc&quot;,&quot;Zacatecas-Chalchihuites&quot;,&quot;Zacatecas-Fresnillo&quot;,&quot;Zacatecas-Trinidad García de la Cadena&quot;,&quot;Zacatecas-Genaro Codina&quot;,&quot;Zacatecas-General Enrique Estrada&quot;,&quot;Zacatecas-General Francisco R. Murguía&quot;,&quot;Zacatecas-El Plateado de Joaquín Amaro&quot;,&quot;Zacatecas-General Pánfilo Natera&quot;,&quot;Zacatecas-Guadalupe&quot;,&quot;Zacatecas-Huanusco&quot;,&quot;Zacatecas-Jalpa&quot;,&quot;Zacatecas-Jerez&quot;,&quot;Zacatecas-Jiménez del Teul&quot;,&quot;Zacatecas-Juan Aldama&quot;,&quot;Zacatecas-Juchipila&quot;,&quot;Zacatecas-Loreto&quot;,&quot;Zacatecas-Luis Moya&quot;,&quot;Zacatecas-Mazapil&quot;,&quot;Zacatecas-Melchor Ocampo&quot;,&quot;Zacatecas-Mezquital del Oro&quot;,&quot;Zacatecas-Miguel Auza&quot;,&quot;Zacatecas-Momax&quot;,&quot;Zacatecas-Monte Escobedo&quot;,&quot;Zacatecas-Morelos&quot;,&quot;Zacatecas-Moyahua de Estrada&quot;,&quot;Zacatecas-Nochistlán de Mejía&quot;,&quot;Zacatecas-Noria de Ángeles&quot;,&quot;Zacatecas-Ojocaliente&quot;,&quot;Zacatecas-Pánuco&quot;,&quot;Zacatecas-Pinos&quot;,&quot;Zacatecas-Río Grande&quot;,&quot;Zacatecas-Sain Alto&quot;,&quot;Zacatecas-El Salvador&quot;,&quot;Zacatecas-Sombrerete&quot;,&quot;Zacatecas-Susticacán&quot;,&quot;Zacatecas-Tabasco&quot;,&quot;Zacatecas-Tepechitlán&quot;,&quot;Zacatecas-Tepetongo&quot;,&quot;Zacatecas-Teúl de González Ortega&quot;,&quot;Zacatecas-Tlaltenango de Sánchez Román&quot;,&quot;Zacatecas-Valparaíso&quot;,&quot;Zacatecas-Vetagrande&quot;,&quot;Zacatecas-Villa de Cos&quot;,&quot;Zacatecas-Villa García&quot;,&quot;Zacatecas-Villa González Ortega&quot;,&quot;Zacatecas-Villa Hidalgo&quot;,&quot;Zacatecas-Villanueva&quot;,&quot;Zacatecas-Zacatecas&quot;,&quot;Zacatecas-Trancoso&quot;,&quot;Zacatecas-Santa María de la Paz&quot;,&quot;&quot;]},&quot;title&quot;:&quot;Desglose_geográfico&quot;},{&quot;name&quot;:&quot;GeoCode&quot;,&quot;type&quot;:&quot;string&quot;,&quot;title&quot;:&quot;GeoCode&quot;},{&quot;name&quot;:&quot;Value&quot;,&quot;type&quot;:&quot;number&quot;,&quot;title&quot;:&quot;Value&quot;}]}"
+  data-compositebreakdownlabel=""
+  data-precision="[]"
+>
+  
+  <span role="status" class="visually-hidden" id="indicator-data-view-status"></span>
+  <div id="indicator-sidebar" class="indicator-sidebar col-md-3">
+    <div id="serieses"></div>
+<div id="units"></div>
+<div id="toolbar">
+  <span id="series-help">
+    <h4>Sub-categories</h4>
+    <p>Choose categories from the dropdowns below to see different breakdowns of the data. Some will not be available until a higher level is chosen.</p>
+  </span>
+  <div id="fields">
+    <p class="async-loading" data-img="/assets/img/loading-small.gif"></p>
+  </div>
+</div>
+
+  </div>
+  <div id="indicator-main" class="indicator-main col-md-9">
+    
+
+
+
+
+<div id="headlineTable">
+
+  <div id="datatables">
+
+    
+    <a href="https://sdg-prod-odsmexico.github.io/sdg-prod-data/en/data/1-2-1-a1.csv" class="btn btn-primary btn-download" download='indicator_1-2-1-a1.csv' tabindex='0' role='button'>Download source data (.csv)</a>
+
+    <p class="no-js-disaggregation-hint">Download source data for disaggregations (.csv)</p>
+
+    
+    <h3>No headline data available</h3>
+    
+  </div>
+
+  
+
+</div>
+
+
+<section>
+
+  <p class="async-loading" data-img="/assets/img/loading-small.gif"></p>
+
+  <div class="async-loaded mt-4" style="display:none;">
+
+    <div style="display: none;">
+    <span id="table-alternative">For tabular data alternative see Table tab.</span>
+  </div>
+  <ul class="nav nav-tabs non-stacking-tabs data-view" role="tablist">
+    
+    <li role="presentation"
+      class="
+        nav-item
+        
+        
+      ">
+      <button
+        class="nav-link active"
+        data-bs-toggle="tab"
+        role="tab"
+        type="button"
+        
+          id="tab-chartview"
+          data-bs-target="#chartview"
+          aria-controls="chartview"
+          aria-describedby="table-alternative"
+          data-on="click"
+data-event-category="Tab change"
+data-event-action="Change data view"
+data-event-label="Change to Chart tab"
+
+        
+      >Chart</button>
+    </li>
+    
+    <li role="presentation"
+      class="
+        nav-item
+        
+        
+      ">
+      <button
+        class="nav-link "
+        data-bs-toggle="tab"
+        role="tab"
+        type="button"
+        
+          id="tab-tableview"
+          data-bs-target="#tableview"
+          aria-controls="tableview"
+          data-on="click"
+data-event-category="Tab change"
+data-event-action="Change data view"
+data-event-label="Change to Table tab"
+
+        
+      >Table</button>
+    </li>
+    
+    <li role="presentation"
+      class="
+        nav-item
+        map
+        
+      ">
+      <button
+        class="nav-link "
+        data-bs-toggle="tab"
+        role="tab"
+        type="button"
+        
+          id="tab-mapview"
+          data-bs-target="#mapview"
+          aria-controls="mapview"
+          data-no-disagg="true"
+          data-on="click"
+data-event-category="Tab change"
+data-event-action="Change data view"
+data-event-label="Change to Map tab"
+
+        
+      >Map</button>
+    </li>
+    
+  </ul>
+  
+    <div class="tab-content data-view">
+    
+      
+        <div role="tabpanel" class="tab-pane active" id="chartview">
+          
+
+    <div id="dataset-size-warning" style="display:none" role="alert">
+      <i class="fa fa-bolt"><span class="sr-only">Warning:</span></i>
+      There are too many datasets to show on the chart. Not all will be shown until you remove some selections.
+    </div>
+
+    
+    <div id="selectionsChart">
+      <figure role="group">
+        <div id="chart-canvas">
+          <h4 id="chart-heading" class="chart-title">Proporción de la población que vive por debajo del umbral nacional de la pobreza, por desglose geográfico</h4>
+          <div id="chart" class="plot-container">
+            <canvas
+    role="img"
+    aria-labelledby="chart-heading"
+    aria-describedby="table-alternative chart-annotations"
+    tabindex="0"
+ ></canvas>
+
+          </div>
+          <div id="plotLegend"></div>
+          
+
+
+
+<div id="selectionChartFooter" class="table-footer-text">
+  <h5 class="sr-only">Chart details</h5>
+    <dl>
+        
+        <dt>Source:</dt>
+        <dd><br>SALUD. Base de datos del Subsistema de Información sobre Nacimientos. Bases de datos de mortalidad.</dd>
+        
+
+        
+
+        <dt class="data-controlled-footer-field unit-from-data">Unit of Measurement:</dt>
+        <dd class="data-controlled-footer-field unit-from-data"></dd>
+
+        
+
+        
+
+        
+
+        
+        
+        <dt
+          class="data-controlled-footer-field"
+          data-ts-attribute="COMMENT_TS"
+        >Footnote:</dt>
+        <dd
+          class="data-controlled-footer-field"
+          data-ts-attribute="COMMENT_TS"
+        ></dd>
+        
+        <dt
+          class="data-controlled-footer-field"
+          data-ts-attribute="DATA_LAST_UPDATE"
+        >Data last updated:</dt>
+        <dd
+          class="data-controlled-footer-field"
+          data-ts-attribute="DATA_LAST_UPDATE"
+        ></dd>
+        
+        
+    </dl>
+</div>
+
+        </div>
+      </figure>
+      <div id="chartSelectionDownload" class="clearfix">
+        <button
+          id="btnSave"
+          title="Download chart image as PNG"
+          aria-label="Download chart image as PNG"
+          class='btn btn-primary btn-download'>
+          Download chart image (.png)
+        </button><!--
+   --></div>
+    </div>
+
+
+
+        </div>
+      
+    
+      
+        <div role="tabpanel" class="tab-pane " id="tableview">
+          <div style="display: none;">
+            <span id="column-sort-info">Click to sort by this column</span>
+          </div>
+          <div id="selectionsTable"></div>
+<dl id="tableTargetLines" class="clearfix"></dl>
+
+
+
+
+<div id="selectionTableFooter" class="table-footer-text">
+  <h5 class="sr-only">Chart details</h5>
+    <dl>
+        
+        <dt>Source:</dt>
+        <dd><br>SALUD. Base de datos del Subsistema de Información sobre Nacimientos. Bases de datos de mortalidad.</dd>
+        
+
+        
+
+        <dt class="data-controlled-footer-field unit-from-data">Unit of Measurement:</dt>
+        <dd class="data-controlled-footer-field unit-from-data"></dd>
+
+        
+
+        
+
+        
+
+        
+        
+        <dt
+          class="data-controlled-footer-field"
+          data-ts-attribute="COMMENT_TS"
+        >Footnote:</dt>
+        <dd
+          class="data-controlled-footer-field"
+          data-ts-attribute="COMMENT_TS"
+        ></dd>
+        
+        <dt
+          class="data-controlled-footer-field"
+          data-ts-attribute="DATA_LAST_UPDATE"
+        >Data last updated:</dt>
+        <dd
+          class="data-controlled-footer-field"
+          data-ts-attribute="DATA_LAST_UPDATE"
+        ></dd>
+        
+        
+    </dl>
+</div>
+
+<div id="tableSelectionDownload" class="clearfix"></div>
+
+        </div>
+      
+    
+      
+        <div role="tabpanel" class="tab-pane " id="mapview" class="map">
+          
+<h4 id="map-heading" class="map-title">Proporción de la población que vive por debajo del umbral nacional de la pobreza, por desglose geográfico</h4>
+<div id="map" aria-describedby="table-alternative">
+  <img class="map-loading-image" src="/assets/img/loading.gif" alt="Loading map" />
+</div>
+
+
+
+
+<div id="mapFooter" class="table-footer-text">
+  <h5 class="sr-only">Chart details</h5>
+    <dl>
+        
+        <dt>Source:</dt>
+        <dd><br>SALUD. Base de datos del Subsistema de Información sobre Nacimientos. Bases de datos de mortalidad.</dd>
+        
+
+        
+
+        <dt class="data-controlled-footer-field unit-from-data">Unit of Measurement:</dt>
+        <dd class="data-controlled-footer-field unit-from-data"></dd>
+
+        
+
+        
+
+        
+
+        
+        
+        <dt
+          class="data-controlled-footer-field"
+          data-ts-attribute="COMMENT_TS"
+        >Footnote:</dt>
+        <dd
+          class="data-controlled-footer-field"
+          data-ts-attribute="COMMENT_TS"
+        ></dd>
+        
+        <dt
+          class="data-controlled-footer-field"
+          data-ts-attribute="DATA_LAST_UPDATE"
+        >Data last updated:</dt>
+        <dd
+          class="data-controlled-footer-field"
+          data-ts-attribute="DATA_LAST_UPDATE"
+        ></dd>
+        
+        
+    </dl>
+</div>
+
+
+        </div>
+      
+    
+  </div>
+  
+
+  </div>
+
+</section>
+
+  
+  <div class="mt-4">
+<ul class="nav nav-tabs" role="tablist">
+    
+    
+        
+        
+        
+        
+        <li role="presentation" class="nav-item">
+            <button
+                type="button"
+                class="nav-link active"
+                data-bs-toggle="tab"
+                id="tab-national"
+                data-bs-target="#national"
+                aria-controls="national"
+                role="tab"
+                data-on="click"
+data-event-category="Tab change"
+data-event-action="Change metadata view"
+data-event-label="Change to indicator.national_metadata tab"
+
+            >National Metadata</button>
+        </li>
+    
+        
+        
+        
+        
+        <li role="presentation" class="nav-item">
+            <button
+                type="button"
+                class="nav-link "
+                data-bs-toggle="tab"
+                id="tab-global"
+                data-bs-target="#global"
+                aria-controls="global"
+                role="tab"
+                data-on="click"
+data-event-category="Tab change"
+data-event-action="Change metadata view"
+data-event-label="Change to indicator.global_metadata tab"
+
+            >Global Metadata</button>
+        </li>
+    
+        
+        
+        
+        
+        <li role="presentation" class="nav-item">
+            <button
+                type="button"
+                class="nav-link "
+                data-bs-toggle="tab"
+                id="tab-sources"
+                data-bs-target="#sources"
+                aria-controls="sources"
+                role="tab"
+                data-on="click"
+data-event-category="Tab change"
+data-event-action="Change metadata view"
+data-event-label="Change to indicator.sources tab"
+
+            >Sources</button>
+        </li>
+    
+    
+    
+</ul>
+
+<div class="tab-content">
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <div role="tabpanel" class="tab-pane active" id="national">
+            <article>
+                <p>This table provides metadata for the actual indicator available from México statistics closest to the corresponding global SDG indicator. Please note that even when the global SDG indicator is fully available from México statistics, this table should be consulted for information on national methodology and other México-specific metadata information.</p>
+
+                <table class="table metadata-content">
+  <tbody>
+  
+  
+  
+  
+  
+  
+      
+      
+      
+        
+          
+      
+      
+      
+      
+      <tr>
+        <th scope="row">Goal </th>
+        <td>
+          
+            <ol>
+  <li>Fin de la pobreza</li>
+</ol>
+
+          
+        </td>
+        </tr>
+        
+      
+  
+      
+      
+      
+      
+      <tr>
+        <th scope="row">Target </th>
+        <td>
+          
+            <p>1.2  De aquí a 2030, reducir al menos a la mitad la proporción de hombres, mujeres y niños de todas las edades que viven en la pobreza en todas sus dimensiones con arreglo a las definiciones nacionales</p>
+
+          
+        </td>
+        </tr>
+        
+      
+  
+      
+      
+      
+      
+      <tr>
+        <th scope="row">Indicator </th>
+        <td>
+          
+            <p>1.2.1.a1  Proporción de la población que vive por debajo del umbral nacional de la pobreza, por desglose geográfico</p>
+
+          
+        </td>
+        </tr>
+        
+      
+  
+      
+      
+      
+      
+      <tr>
+        <th scope="row">Series </th>
+        <td>
+          
+            <p>Este indicador resulta de identificar a la población de referencia que cuenta con un ingreso corriente total per cápita inferior al valor monetario de la línea de pobreza por ingresos (canasta alimentaria y no alimentaria), dividir dicho número de personas entre la población de referencia total y de multiplicar el cociente por 100.</p>
+
+          
+        </td>
+        </tr>
+        
+      
+  
+      
+      
+      
+      
+      <tr>
+        <th scope="row">Metadata update </th>
+        <td>
+          
+            <p>12 de noviembre de 2019</p>
+
+          
+        </td>
+        </tr>
+        
+      
+  
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+      
+      <tr>
+        <th scope="row">Contact person(s) </th>
+        <td>
+          
+            <p>Alida Marcela Gutiérrez Landeros</p>
+
+          
+        </td>
+        </tr>
+        
+      
+  
+      
+      
+      
+      
+      <tr>
+        <th scope="row">Contact organisation unit </th>
+        <td>
+          
+            <p>Coordinadora General de Análisis de la Pobreza</p>
+
+          
+        </td>
+        </tr>
+        
+      
+  
+      
+      
+      
+        
+          
+      
+      
+      
+      
+      <tr>
+        <th scope="row">Contact phone </th>
+        <td>
+          
+            <p>Insurgentes Sur #810, Colonia Del Valle, C.P. 03100, Benito Juárez, Ciudad de México 54 81 72 75 o 00, ext. 70075</p>
+
+          
+        </td>
+        </tr>
+        
+      
+  
+      
+      
+      
+      
+      <tr>
+        <th scope="row">Contact mail </th>
+        <td>
+          
+            <p>amgutierrez@coneval.org.mx</p>
+
+          
+        </td>
+        </tr>
+        
+      
+  
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+      
+      <tr>
+        <th scope="row">Definition and concepts </th>
+        <td>
+          
+            <h2 id="definicion">Definicion:</h2>
+<p>Es el porcentaje de la población de referencia que tiene un ingreso corriente total per cápita inferior al valor monetario de la línea de pobreza por ingresos (canasta alimentaria y no alimentaria).</p>
+
+          
+        </td>
+        </tr>
+        
+      
+  
+      
+      
+      
+      
+      <tr>
+        <th scope="row">Unit of measure </th>
+        <td>
+          
+            <p>Porcentaje</p>
+
+          
+        </td>
+        </tr>
+        
+      
+  
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+      
+      <tr>
+        <th scope="row">Data sources </th>
+        <td>
+          
+            <p>SALUD. Base de datos del Subsistema de Información sobre Nacimientos. Bases de datos de mortalidad.</p>
+
+          
+        </td>
+        </tr>
+        
+      
+  
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+      
+      <tr>
+        <th scope="row">Data availability and disaggregation </th>
+        <td>
+          
+            <p>2008-2018</p>
+
+          
+        </td>
+        </tr>
+        
+      
+  
+      
+      
+      
+        
+          
+      
+      
+      
+      
+      <tr>
+        <th scope="row">References and Documentation </th>
+        <td>
+          
+            <p><a href="https://agenda2030.mx/docs/files/csv/zip/2.1.2.a_es.zip">Datos para el cálculo</a></p>
+
+          
+        </td>
+        </tr>
+        
+      
+  
+      
+      
+      
+      
+      <tr>
+        <th scope="row">Data last updated </th>
+        <td>
+          
+            Nov 13, 2022
+          
+        </td>
+        </tr>
+        
+      
+  
+      
+      
+      
+      
+      <tr>
+        <th scope="row">Metadata last updated </th>
+        <td>
+          
+            Nov 13, 2022
+          
+        </td>
+        </tr>
+        
+      
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+            </article>
+        </div>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <div role="tabpanel" class="tab-pane " id="global">
+            <article>
+                <p>This table provides information on metadata for SDG indicators as defined by the UN Statistical Commission. <a href="https://unstats.un.org/sdgs/metadata/">Complete global metadata</a> is provided by the UN Statistics Division.</p>
+
+                <table class="table metadata-content">
+  <tbody>
+  
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      
+      
+      
+        
+          
+  </tbody>
+</table>
+
+            </article>
+        </div>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <div role="tabpanel" class="tab-pane " id="sources">
+            <article>
+                
+                <!-- Count the non-empty sources (up to 5) -->
+
+
+
+
+  <div class="row">
+  
+    
+    
+    <div class="col-md-6">
+      
+      <table class="table metadata-content">
+  <tbody>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      
+      
+      
+      
+      <tr>
+        <th scope="row">Organisation </th>
+        <td>
+          
+            <p><br />SALUD. Base de datos del Subsistema de Información sobre Nacimientos. Bases de datos de mortalidad.</p>
+
+          
+        </td>
+        </tr>
+        
+      
+  
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+      
+      
+      
+        
+          
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+    </div>
+    
+  </div>
+
+
+            </article>
+        </div>
+        
+    
+    
+</div>
+
+</div>
+  </div>
+</div>
+
+  <a href="#top">Back to top</a>
+</div>
+
+<footer role="contentinfo">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div id="footerLinks">
+                    <ul>
+                        <li>
+                            <a href="https://open-sdg.org">Built using Open SDG</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/en/contact-us">Contact us</a>
+                            
+                        </li>
+                        <li>
+                            
+                            <a href="https://twitter.com/MyTwitterAccount" target="_blank">Twitter</a>
+                            
+                        </li>
+                        <li>
+                            
+                            <a href="https://facebook.com/MyFacebookAccount" target="_blank">Facebook</a>
+                            
+                        </li>
+                        <li>
+                            <a href="/en/about/cookies-and-privacy/">Cookies</a>
+                            
+                        </li>
+                        
+                        
+                        </ul>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<script src="//cdn.datatables.net/fixedcolumns/3.2.3/js/dataTables.fixedColumns.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js" integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js" integrity="sha256-Y26AMvaIfrZ1EQU49pf6H4QzVTrOI8m9wQYKkftBt4s=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/patternomaly@1.3.2/dist/patternomaly.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.2.2/dist/chartjs-plugin-annotation.min.js" integrity="sha256-XuHhf6q+GD7fscc96mTm/228GXf1Nn9wOYOE0EgeFzY=" crossorigin="anonymous"></script>
+
+
+<script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA==" crossorigin=""></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet.zoomshowhide@0.1.0/dist/leaflet-zoom-show-hide.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/1.4.0/chroma.min.js"></script>
+<script src="https://cdn.rawgit.com/nezasa/iso8601-js-period/master/iso8601.min.js"></script>
+<script src="https://cdn.rawgit.com/socib/Leaflet.TimeDimension/master/dist/leaflet.timedimension.min.js"></script>
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
+<script src="https://cdn.jsdelivr.net/gh/torfsen/leaflet.zoomhome@master/dist/leaflet.zoomhome.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet-search@2.9.7/dist/leaflet-search.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.1/autotrack.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.3/dist/html2canvas.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.2/dist/FileSaver.min.js"></script>
+
+
+
+
+
+  <script >
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'G-R7QPWT5RB3', 'auto');
+ga('require', 'eventTracker', {
+    attributePrefix: 'data-'
+});
+// anonymize user IPs (chops off the last IP triplet)
+ga('set', 'anonymizeIp', true);
+// forces SSL even if the page were somehow loaded over http://
+ga('set', 'forceSSL', true);
+ga('send', 'pageview');
+</script>
+
+
+
+<script>translations['general'] = translations['general'] || {};
+    translations['general']['hide'] = 'hide';</script>
+
+<script>translations['search'] = translations['search'] || {};
+    translations['search']['search'] = 'Search';</script>
+
+<script src='/assets/js/sdg.js?v=20221117161900'></script>
+
+
+    
+    
+    <script src="/assets/js/custom.js?v=20221117161900"></script><script>
+    new indicatorInit();
+    new accessibilitySwitcher();
+</script>
+
+
+</body>
+</html>
