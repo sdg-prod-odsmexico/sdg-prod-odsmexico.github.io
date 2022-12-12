@@ -79,7 +79,7 @@
         },
         {
           "id": "1-5-1",
-          "title": "Número de personas muertas, desaparecidas y afectadas directamente atribuido a desastres por cada 100 000 habitantes",
+          "title": "Número de personas muertas, desaparecidas y afectadas directamente atribuido a desastres por cada 100.000 habitantes",
           "description": "",
           "keywords": "",
           "href": "/1-5-1",
@@ -151,7 +151,7 @@
         },
         {
           "id": "2-1-2",
-          "title": "Proporción de la población con inseguridad alimentaria moderada o severa, desglosada por sexo y edad",
+          "title": "Prevalencia de la inseguridad alimentaria moderada o grave entre la población, según la escala de experiencia de inseguridad alimentaria",
           "description": "",
           "keywords": "",
           "href": "/2-1-2",
@@ -263,7 +263,7 @@
         
         {
           "id": "3-1-1",
-          "title": "Razón de mortalidad materna",
+          "title": "Tasa de mortalidad materna",
           "description": "",
           "keywords": "",
           "href": "/3-1-1",
@@ -1879,7 +1879,7 @@
         },
         {
           "id": "16-6-2-a",
-          "title": "Satisfacción con el servicio de educación pública obligatoria",
+          "title": "16.6.2.a  Satisfacción con el servicio de educación pública obligatoria",
           "description": "",
           "keywords": "",
           "href": "/16-6-2-a",
@@ -1895,7 +1895,7 @@
         },
         {
           "id": "16-7-2",
-          "title": "Proporción de la población que considera que la adopción de decisiones es inclusiva y participativa",
+          "title": "Proporción de la población que considera que la adopción de decisiones es inclusiva y responde a sus necesidades, desglosada por sexo, edad, discapacidad y grupo de población",
           "description": "",
           "keywords": "",
           "href": "/16-7-2",
@@ -1991,7 +1991,7 @@
         },
         {
           "id": "17-3-2",
-          "title": "Volumen de las remesas (en dólares de los Estados Unidos) como proporción del PIB total",
+          "title": "Volumen de remesas (en dólares de los Estados Unidos) en proporción al PIB total",
           "description": "",
           "keywords": "",
           "href": "/17-3-2",

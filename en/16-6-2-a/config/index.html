@@ -129,7 +129,7 @@ var translations = {
         <link res="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" crossorigin="">
         <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/3.2.3/css/fixedColumns.dataTables.min.css" crossorigin="">
-        <link rel="stylesheet" href="/assets/css/style.css?v=20221206220138">
+        <link rel="stylesheet" href="/assets/css/style.css?v=20221212160740">
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
           integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
           crossorigin=""/>
@@ -539,7 +539,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('data_footnote', "");
+        var currentValue = normalizeCurrentValue('data_footnote', "<br>a/ Ejemplo llamada para desagregación total. <br><br> Periodo 2013, Chiapas, Sexo-Hombres.- Las estimaciones tienen un coeficiente de variación (%) en el rango de [15,30), por lo que su nivel de precisión es clasificado como Moderado.");
         var propertyEditor = editor.getEditor('root.data_footnote');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -801,7 +801,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('indicator_name', "Satisfacción con el servicio de educación pública obligatoria");
+        var currentValue = normalizeCurrentValue('indicator_name', "16.6.2.a  Satisfacción con el servicio de educación pública obligatoria");
         var propertyEditor = editor.getEditor('root.indicator_name');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -1091,12 +1091,12 @@ ga('send', 'pageview');
 <script>translations['search'] = translations['search'] || {};
     translations['search']['search'] = 'Search';</script>
 
-<script src='/assets/js/sdg.js?v=20221206220138'></script>
+<script src='/assets/js/sdg.js?v=20221212160740'></script>
 
 
     
     
-    <script src="/assets/js/custom.js?v=20221206220138"></script><script>
+    <script src="/assets/js/custom.js?v=20221212160740"></script><script>
     new indicatorInit();
     new accessibilitySwitcher();
 </script>
