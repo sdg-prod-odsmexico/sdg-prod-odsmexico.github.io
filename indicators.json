@@ -15,34 +15,10 @@
         },
         {
           "id": "1-2-1",
-          "title": "Proporción de la población que vive por debajo del umbral nacional de pobreza, desglosada por sexo y edad",
+          "title": "Proporción de la población que vive por debajo del umbral nacional de la pobreza, desglosada por sexo y edad",
           "description": "",
           "keywords": "",
           "href": "/1-2-1",
-          "status": "notstarted"
-        },
-        {
-          "id": "1-2-1-a1",
-          "title": "Proporción de la población que vive por debajo del umbral nacional de la pobreza, por desglose geográfico",
-          "description": "",
-          "keywords": "",
-          "href": "/1-2-1-a1",
-          "status": "complete"
-        },
-        {
-          "id": "1-2-1-a2",
-          "title": "Proporción de la población que vive por debajo del umbral nacional de la pobreza, por desglose geográfico",
-          "description": "",
-          "keywords": "",
-          "href": "/1-2-1-a2",
-          "status": "complete"
-        },
-        {
-          "id": "1-2-1-a",
-          "title": "Proporción de la población que vive por debajo del umbral nacional de la pobreza, por desglose geográfico",
-          "description": "",
-          "keywords": "",
-          "href": "/1-2-1-a",
           "status": "complete"
         },
         {
@@ -1871,11 +1847,11 @@
         },
         {
           "id": "16-6-2",
-          "title": "Proporción de la población que se siente satisfecha con su última experiencia de los servicios públicos",
+          "title": "Proporción de la población que se siente satisfecha con su última experiencia de los servicios públicos",
           "description": "",
           "keywords": "",
           "href": "/16-6-2",
-          "status": "notstarted"
+          "status": "complete"
         },
         {
           "id": "16-6-2-a",
