@@ -15,7 +15,7 @@
         },
         {
           "id": "1-2-1",
-          "title": "Proporción de la población que vive por debajo del umbral nacional de la pobreza, desglosada por sexo y edad",
+          "title": "Proporción de la población que vive por debajo del umbral nacional de la pobreza",
           "description": "",
           "keywords": "",
           "href": "/en/1-2-1",
@@ -1851,14 +1851,6 @@
           "description": "",
           "keywords": "",
           "href": "/en/16-6-2",
-          "status": "complete"
-        },
-        {
-          "id": "16-6-2-a",
-          "title": "16.6.2.a  Satisfacción con el servicio de educación pública obligatoria",
-          "description": "",
-          "keywords": "",
-          "href": "/en/16-6-2-a",
           "status": "complete"
         },
         {
