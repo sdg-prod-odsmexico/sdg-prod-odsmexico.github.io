@@ -129,7 +129,7 @@ var translations = {
         <link res="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" crossorigin="">
         <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/3.2.3/css/fixedColumns.dataTables.min.css" crossorigin="">
-        <link rel="stylesheet" href="/assets/css/style.css?v=20230209220524">
+        <link rel="stylesheet" href="/assets/css/style.css?v=20230313195604">
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
           integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
           crossorigin=""/>
@@ -569,7 +569,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('SDG_GOAL', "Objetivo 3. Salud y bienestar");
+        var currentValue = normalizeCurrentValue('SDG_GOAL', "Objetivo 3. Garantizar una vida sana y promover el bienestar de todos a todas las edades ");
         var propertyEditor = editor.getEditor('root.SDG_GOAL');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -583,7 +583,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('SDG_TARGET', "3.1  De aquí a 2030, reducir la tasa mundial de mortalidad materna a menos de 70 por cada 100,000 nacidos vivos");
+        var currentValue = normalizeCurrentValue('SDG_TARGET', "3.1 De aquí a 2030, reducir la tasa mundial de mortalidad materna a menos de 70 por cada 100,000 nacidos vivos");
         var propertyEditor = editor.getEditor('root.SDG_TARGET');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -611,7 +611,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('SDG_SERIES_DESCR', "Este indicador resulta de dividir el número de muertes maternas en un determinado año, entre el total de nacidos vivos en el mismo periodo, multiplicado por 100 mil.");
+        var currentValue = normalizeCurrentValue('SDG_SERIES_DESCR', "Es el número de defunciones de mujeres mientras se encuentren embarazadas o dentro de los 42 días siguientes a la terminación del embarazo, debida a cualquier causa relacionada con o agravada por el embarazo mismo o su atención (con exclusión de las muertes accidentales o incidentales), en un determinado año, por cada 100 mil nacidos vivos en ese mismo año. Representa el riesgo obstétrico.");
         var propertyEditor = editor.getEditor('root.SDG_SERIES_DESCR');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -625,7 +625,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('META_LAST_UPDATE', "24 de septiembre de 2021");
+        var currentValue = normalizeCurrentValue('META_LAST_UPDATE', "13 de febrero de 2023");
         var propertyEditor = editor.getEditor('root.META_LAST_UPDATE');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -655,7 +655,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('CONTACT_ORGANISATION', "");
+        var currentValue = normalizeCurrentValue('CONTACT_ORGANISATION', "Secretaría de Salud (SS). Dirección General de Información en Salud (DGIS).");
         var propertyEditor = editor.getEditor('root.CONTACT_ORGANISATION');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -683,7 +683,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('ORGANISATION_UNIT', "Director de Evaluación del Desempeño de los Sistemas de Salud");
+        var currentValue = normalizeCurrentValue('ORGANISATION_UNIT', "");
         var propertyEditor = editor.getEditor('root.ORGANISATION_UNIT');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -697,7 +697,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('CONTACT_FUNCT', "");
+        var currentValue = normalizeCurrentValue('CONTACT_FUNCT', "Director de Evaluación del Desempeño de los Sistemas de Salud");
         var propertyEditor = editor.getEditor('root.CONTACT_FUNCT');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -711,7 +711,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('CONTACT_PHONE', "Avenida Paseo de la Reforma 450 Colonia Juárez, 06600 Cuauhtémoc, Cuauhtémoc, Ciudad de México 55 6392 2300, ext. 52681");
+        var currentValue = normalizeCurrentValue('CONTACT_PHONE', "55 6392 2300, ext. 52681");
         var propertyEditor = editor.getEditor('root.CONTACT_PHONE');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -725,7 +725,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('CONTACT_MAIL', "delfino.campos@salud.gob.mx");
+        var currentValue = normalizeCurrentValue('CONTACT_MAIL', "mgutierrez@coneval.org.mx");
         var propertyEditor = editor.getEditor('root.CONTACT_MAIL');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -737,25 +737,13 @@ data-event-label="high"
       }
     propertyEditorAccessibilityFixes(editor.getEditor('root.CONTACT_MAIL'));
 
-    
-      try {
-        var currentValue = normalizeCurrentValue('CONTACT_EMAIL', "");
-        var propertyEditor = editor.getEditor('root.CONTACT_EMAIL');
-        propertyEditor.setValue(null);
-        propertyEditor.setValue(currentValue);
-        
-      }
-      catch (e) {
-        console.log(e.message);
-        console.log('Unable to set config key: CONTACT_EMAIL');
-      }
     propertyEditorAccessibilityFixes(editor.getEditor('root.CONTACT_EMAIL'));
 
     propertyEditorAccessibilityFixes(editor.getEditor('root.IND_DEF_CON_CLASS'));
 
     
       try {
-        var currentValue = normalizeCurrentValue('STAT_CONC_DEF', "## Definicion:\nEs el número de defunciones de mujeres mientras se encuentren embarazadas o dentro de los 42 días siguientes a la terminación del embarazo, debida a cualquier causa relacionada con o agravada por el embarazo mismo o su atención (con exclusión de las muertes accidentales o incidentales), en un determinado año, por cada 100 mil nacidos vivos en ese mismo año. Representa el riesgo obstétrico.");
+        var currentValue = normalizeCurrentValue('STAT_CONC_DEF', "Este indicador resulta de dividir el número de muertes maternas en un determinado año, entre el total de nacidos vivos en el mismo periodo, multiplicado por 100 mil.");
         var propertyEditor = editor.getEditor('root.STAT_CONC_DEF');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -769,7 +757,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('UNIT_MEASURE', "Defunciones de mujeres por cada 100 mil nacidos vivos");
+        var currentValue = normalizeCurrentValue('UNIT_MEASURE', "Defunciones de mujeres por cada 100 mil  nacidos vivos");
         var propertyEditor = editor.getEditor('root.UNIT_MEASURE');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -841,7 +829,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('REL_CAL_POLICY', "");
+        var currentValue = normalizeCurrentValue('REL_CAL_POLICY', "No definida");
         var propertyEditor = editor.getEditor('root.REL_CAL_POLICY');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -855,7 +843,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('DATA_SOURCE', "");
+        var currentValue = normalizeCurrentValue('DATA_SOURCE', "Secretaría de Salud (SS). Dirección General de Información en Salud (DGIS).");
         var propertyEditor = editor.getEditor('root.DATA_SOURCE');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -941,7 +929,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('DATA_VALIDATION', "");
+        var currentValue = normalizeCurrentValue('DATA_VALIDATION', "Los datos del periodo 1990-2001 corresponden a razones de mortalidad materna estimadas. Para este periodo, la estimación a nivel nacional se basó en diversos estudios nacionales e internacionales sobre el subregistro de la mortalidad materna, y en datos de la Encuesta Nacional de la Dinámica Demográfica. La estimación para las entidades federativas se calculó respecto a la estimación nacional, tomando en cuenta la distribución porcentual de las muertes maternas observadas, por lo que los datos no consideraron la heterogeneidad del subregistro entre entidades.\nSin embargo, a partir de 2002, este indicador se calcula considerando para el numerador el número de defunciones maternas de 10 a 54 años ocurridas en el año por entidad de residencia habitual, según las estadísticas vitales de defunciones del INEGI/SS que corresponden a los resultados de la \"Búsqueda Intencionada y Reclasificación de muertes maternas\".\nA partir de 2007 se excluyen defunciones con residencia en el extranjero y a partir de 2009 se excluyen las muertes maternas registradas de manera extemporánea.\nEn cuanto a los nacidos vivos, cabe destacar que en las siguientes entidades Chihuahua, Hidalgo, San Luis Potosí, Sonora, Veracruz y Yucatán, aún falta mejorar la cobertura del SINAC, por lo cual las cifras se corrigen a través de un factor de ajuste por entidad federativa, que se obtiene a partir de la tendencia de las diferencias porcentuales entre los nacimientos estimados del CONAPO y los nacidos vivos ocurridos del SINAC.\nSegún la Clasificación Internacional de Enfermedades 10a rev. (CIE-10) se considera una defunción materna a la clasificada en los códigos O00-O99, A34, D392, F53, M830 y embarazadas con B20-B24. Excluye muertes maternas tardías (O96 y O97) y defunciones por coriocarcinoma (C58). Los códigos CIE9 correspondientes son 630-679.\nLa descripción de los códigos de la Clasificación Internacional de Enfermedades 10a rev. (CIE-10) se encuentra disponible en la siguiente dirección http://www.who.int/classifications/apps/icd/icd10online/\nEste indicador forma parte del Catálogo Nacional de Indicadores (CNI).");
         var propertyEditor = editor.getEditor('root.DATA_VALIDATION');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -1011,7 +999,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('COVERAGE', "1990-2019");
+        var currentValue = normalizeCurrentValue('COVERAGE', "1990 - 2021");
         var propertyEditor = editor.getEditor('root.COVERAGE');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -1053,7 +1041,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('national_data_updated_date', "2022-11-12");
+        var currentValue = normalizeCurrentValue('national_data_updated_date', "2023-03-13");
         var propertyEditor = editor.getEditor('root.national_data_updated_date');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -1067,7 +1055,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('national_metadata_updated_date', "2022-12-12");
+        var currentValue = normalizeCurrentValue('national_metadata_updated_date', "2023-03-13");
         var propertyEditor = editor.getEditor('root.national_metadata_updated_date');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -1231,12 +1219,12 @@ ga('send', 'pageview');
 <script>translations['search'] = translations['search'] || {};
     translations['search']['search'] = 'Buscar';</script>
 
-<script src='/assets/js/sdg.js?v=20230209220524'></script>
+<script src='/assets/js/sdg.js?v=20230313195604'></script>
 
 
     
     
-    <script src="/assets/js/custom.js?v=20230209220524"></script><script>
+    <script src="/assets/js/custom.js?v=20230313195604"></script><script>
     new indicatorInit();
     new accessibilitySwitcher();
 </script>

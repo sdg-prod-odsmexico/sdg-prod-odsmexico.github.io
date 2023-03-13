@@ -129,7 +129,7 @@ var translations = {
         <link res="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" crossorigin="">
         <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/3.2.3/css/fixedColumns.dataTables.min.css" crossorigin="">
-        <link rel="stylesheet" href="/assets/css/style.css?v=20230209220524">
+        <link rel="stylesheet" href="/assets/css/style.css?v=20230313195604">
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
           integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
           crossorigin=""/>
@@ -557,7 +557,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('SDG_GOAL', "Objetivo 17: Alianzas para lograr los objetivos");
+        var currentValue = normalizeCurrentValue('SDG_GOAL', "Objetivo 17. Fortalecer los medios de implementación y revitalizar la Alianza Mundial para el Desarrollo Sostenible ");
         var propertyEditor = editor.getEditor('root.SDG_GOAL');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -571,7 +571,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('SDG_TARGET', "Meta 17.3: Movilizar recursos financieros adicionales de múltiples fuentes para los países en desarrollo");
+        var currentValue = normalizeCurrentValue('SDG_TARGET', "17.3 Movilizar recursos financieros adicionales de múltiples fuentes para los países en desarrollo");
         var propertyEditor = editor.getEditor('root.SDG_TARGET');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -585,7 +585,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('SDG_INDICATOR', "Indicador 17.3.2:  Volumen de las remesas (en dólares de los Estados Unidos) como proporción del PIB total");
+        var currentValue = normalizeCurrentValue('SDG_INDICATOR', "17.3.2 Volumen de las remesas (en dólares de los Estados Unidos) como proporción del PIB total");
         var propertyEditor = editor.getEditor('root.SDG_INDICATOR');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -599,7 +599,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('SDG_SERIES_DESCR', "División del monto de remesas totales en un trimestre entre el PIB nominal en dólares de México de ese trimestre.");
+        var currentValue = normalizeCurrentValue('SDG_SERIES_DESCR', "Es el porcentaje que representa la cantidad en moneda nacional o extranjera proveniente del exterior, transferida a través de empresas, originada por un remitente (persona física residente en el exterior que transfiere recursos económicos a sus familiares en México) para ser entregada en territorio nacional a un beneficiario (persona física residente en México que recibe los recursos que transfiere el remitente) respecto al Producto Interno Bruto (PIB).");
         var propertyEditor = editor.getEditor('root.SDG_SERIES_DESCR');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -613,7 +613,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('META_LAST_UPDATE', "25 de agosto de 2022");
+        var currentValue = normalizeCurrentValue('META_LAST_UPDATE', "25 de noviembre de 2022");
         var propertyEditor = editor.getEditor('root.META_LAST_UPDATE');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -643,7 +643,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('CONTACT_ORGANISATION', "");
+        var currentValue = normalizeCurrentValue('CONTACT_ORGANISATION', "Banco de México (BANXICO), Dirección General de Investigación Económica.");
         var propertyEditor = editor.getEditor('root.CONTACT_ORGANISATION');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -657,7 +657,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('CONTACT_NAME', "Enrique Guevara Ortiz");
+        var currentValue = normalizeCurrentValue('CONTACT_NAME', "Ricardo Leyva Bernal");
         var propertyEditor = editor.getEditor('root.CONTACT_NAME');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -671,7 +671,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('ORGANISATION_UNIT', "Ricardo Leyva Bernal");
+        var currentValue = normalizeCurrentValue('ORGANISATION_UNIT', "");
         var propertyEditor = editor.getEditor('root.ORGANISATION_UNIT');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -725,25 +725,13 @@ data-event-label="high"
       }
     propertyEditorAccessibilityFixes(editor.getEditor('root.CONTACT_MAIL'));
 
-    
-      try {
-        var currentValue = normalizeCurrentValue('CONTACT_EMAIL', "");
-        var propertyEditor = editor.getEditor('root.CONTACT_EMAIL');
-        propertyEditor.setValue(null);
-        propertyEditor.setValue(currentValue);
-        
-      }
-      catch (e) {
-        console.log(e.message);
-        console.log('Unable to set config key: CONTACT_EMAIL');
-      }
     propertyEditorAccessibilityFixes(editor.getEditor('root.CONTACT_EMAIL'));
 
     propertyEditorAccessibilityFixes(editor.getEditor('root.IND_DEF_CON_CLASS'));
 
     
       try {
-        var currentValue = normalizeCurrentValue('STAT_CONC_DEF', "## Definicion:\nEs el porcentaje que representa la cantidad en moneda nacional o extranjera proveniente del exterior, transferida a través de empresas, originada por un remitente (persona física residente en el exterior que transfiere recursos económicos a sus familiares en México) para ser entregada en territorio nacional a un beneficiario (persona física residente en México que recibe los recursos que transfiere el remitente) respecto al Producto Interno Bruto (PIB).");
+        var currentValue = normalizeCurrentValue('STAT_CONC_DEF', "División del monto de remesas totales en un trimestre entre el PIB nominal en dólares de México de ese trimestre.");
         var propertyEditor = editor.getEditor('root.STAT_CONC_DEF');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -787,7 +775,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('SOURCE_TYPE', "Para ingresos por remesas, Banco de México (BANXICO), Balanza de Pagos, estadística trimestral; para PIB en dólares, cálculo de Banco de México (BANXICO) con base en la estadística trimestral del PIB nominal en pesos del Instituto Nacional de Estadística y Geografía (INEGI), Indicadores Económicos de Coyuntura y el tipo de cambio promedio del periodo del peso respecto al dólar de los EE.UU., fecha de determinación (FIX) de Banco de México.");
+        var currentValue = normalizeCurrentValue('SOURCE_TYPE', "Sin referencia");
         var propertyEditor = editor.getEditor('root.SOURCE_TYPE');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -829,7 +817,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('REL_CAL_POLICY', "25 de noviembre de 2022");
+        var currentValue = normalizeCurrentValue('REL_CAL_POLICY', "24 de febrero de 2023");
         var propertyEditor = editor.getEditor('root.REL_CAL_POLICY');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -843,7 +831,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('DATA_SOURCE', "");
+        var currentValue = normalizeCurrentValue('DATA_SOURCE', "Instituto Nacional de Estadística y Geografía (INEGI). Encuesta Nacional de Calidad e Impacto Gubernamental (ENCIG).  https://www.inegi.org.mx/programas/encig/2021/");
         var propertyEditor = editor.getEditor('root.DATA_SOURCE');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -929,7 +917,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('DATA_VALIDATION', "");
+        var currentValue = normalizeCurrentValue('DATA_VALIDATION', "La series estadísticas del indicador y del \"PIB Promedio trimestral no anualizado\" son preliminares debido al método de estimación, por lo que las series pueden ser modificadas al incorporarse nueva información y, los \"Ingresos por remesas\" a partir 2022/1.");
         var propertyEditor = editor.getEditor('root.DATA_VALIDATION');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -999,7 +987,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('COVERAGE', "Nacional 1996/I-2022/II");
+        var currentValue = normalizeCurrentValue('COVERAGE', "1996/I - 2022/III");
         var propertyEditor = editor.getEditor('root.COVERAGE');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -1041,7 +1029,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('national_data_updated_date', "2022-11-17");
+        var currentValue = normalizeCurrentValue('national_data_updated_date', "2023-03-13");
         var propertyEditor = editor.getEditor('root.national_data_updated_date');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -1055,7 +1043,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('national_metadata_updated_date', "2022-12-12");
+        var currentValue = normalizeCurrentValue('national_metadata_updated_date', "2023-03-13");
         var propertyEditor = editor.getEditor('root.national_metadata_updated_date');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -1219,12 +1207,12 @@ ga('send', 'pageview');
 <script>translations['search'] = translations['search'] || {};
     translations['search']['search'] = 'Search';</script>
 
-<script src='/assets/js/sdg.js?v=20230209220524'></script>
+<script src='/assets/js/sdg.js?v=20230313195604'></script>
 
 
     
     
-    <script src="/assets/js/custom.js?v=20230209220524"></script><script>
+    <script src="/assets/js/custom.js?v=20230313195604"></script><script>
     new indicatorInit();
     new accessibilitySwitcher();
 </script>

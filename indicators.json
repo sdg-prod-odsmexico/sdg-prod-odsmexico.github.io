@@ -7,7 +7,7 @@
         
         {
           "id": "1-1-1",
-          "title": "Proporción de la población que vive por debajo del umbral de pobreza internacional por sexo, edad, situación laboral y ubicación geográfica (urbana/rural)",
+          "title": "1.1.1  Proporción de la población que vive por debajo del umbral internacional de la pobreza (1.90 dólares diarios), desglosada por sexo, edad, situación laboral y ubicación geográfica (urbano y rural)",
           "description": "",
           "keywords": "",
           "href": "/1-1-1",
@@ -15,7 +15,7 @@
         },
         {
           "id": "1-2-1",
-          "title": "Proporción de la población que vive por debajo del umbral nacional de la pobreza",
+          "title": "1.2.1 Proporción de la población que vive por debajo del umbral nacional de la pobreza, desglosada por sexo y edad",
           "description": "",
           "keywords": "",
           "href": "/1-2-1",
@@ -55,7 +55,7 @@
         },
         {
           "id": "1-5-1",
-          "title": "Número de personas muertas, desaparecidas y afectadas directamente atribuido a desastres por cada 100.000 habitantes",
+          "title": "1.5.1 Número de personas muertas, desaparecidas y afectadas directamente atribuido a desastres por cada 100 000 habitantes",
           "description": "",
           "keywords": "",
           "href": "/1-5-1",
@@ -127,7 +127,7 @@
         },
         {
           "id": "2-1-2",
-          "title": "Prevalencia de la inseguridad alimentaria moderada o grave entre la población, según la escala de experiencia de inseguridad alimentaria",
+          "title": "2.1.2 Proporción de la población con inseguridad alimentaria moderada o severa (carencia por acceso a la alimentación), desglosada por sexo y edad",
           "description": "",
           "keywords": "",
           "href": "/2-1-2",
@@ -239,7 +239,7 @@
         
         {
           "id": "3-1-1",
-          "title": "Tasa de mortalidad materna",
+          "title": "3.1.1 Razón de mortalidad materna",
           "description": "",
           "keywords": "",
           "href": "/3-1-1",
@@ -1847,7 +1847,7 @@
         },
         {
           "id": "16-6-2",
-          "title": "Proporción de la población que se siente satisfecha con su última experiencia de los servicios públicos",
+          "title": "16.6.2 Crear a todos los niveles instituciones eficaces y transparentes que rindan cuentas",
           "description": "",
           "keywords": "",
           "href": "/16-6-2",
@@ -1863,7 +1863,7 @@
         },
         {
           "id": "16-7-2",
-          "title": "Proporción de la población que considera que la adopción de decisiones es inclusiva y responde a sus necesidades, desglosada por sexo, edad, discapacidad y grupo de población",
+          "title": "16.7.2. Proporción de la población que considera que la adopción de decisiones es inclusiva y participativa",
           "description": "",
           "keywords": "",
           "href": "/16-7-2",
@@ -1959,7 +1959,7 @@
         },
         {
           "id": "17-3-2",
-          "title": "Volumen de remesas (en dólares de los Estados Unidos) en proporción al PIB total",
+          "title": "17.3.2 Volumen de las remesas (en dólares de los Estados Unidos) como proporción del PIB total",
           "description": "",
           "keywords": "",
           "href": "/17-3-2",

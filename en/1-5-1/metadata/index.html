@@ -129,7 +129,7 @@ var translations = {
         <link res="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" crossorigin="">
         <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/3.2.3/css/fixedColumns.dataTables.min.css" crossorigin="">
-        <link rel="stylesheet" href="/assets/css/style.css?v=20230209220524">
+        <link rel="stylesheet" href="/assets/css/style.css?v=20230313195604">
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
           integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
           crossorigin=""/>
@@ -557,7 +557,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('SDG_GOAL', "Objetivo 1: Fin de la pobreza");
+        var currentValue = normalizeCurrentValue('SDG_GOAL', "Objetivo 1. Fin de la pobreza");
         var propertyEditor = editor.getEditor('root.SDG_GOAL');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -571,7 +571,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('SDG_TARGET', "Meta 1.5: De aquí a 2030, fomentar la resiliencia de los pobres y las personas que se encuentran en situaciones de vulnerabilidad y reducir su exposición y vulnerabilidad a los fenómenos extremos relacionados con el clima y otras perturbaciones y desastres económicos, sociales y ambientales");
+        var currentValue = normalizeCurrentValue('SDG_TARGET', "1.5 De aquí a 2030, fomentar la resiliencia de los pobres y las personas que se encuentran en situaciones de vulnerabilidad y reducir su exposición y vulnerabilidad a los fenómenos");
         var propertyEditor = editor.getEditor('root.SDG_TARGET');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -585,7 +585,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('SDG_INDICATOR', "Indicador 1.5.1: Número de personas muertas, desaparecidas y afectadas directamente atribuido a desastres por cada 100 000 habitantes");
+        var currentValue = normalizeCurrentValue('SDG_INDICATOR', "1.5.1 Número de personas muertas, desaparecidas y afectadas directamente atribuido a desastres por cada 100 000 habitantes");
         var propertyEditor = editor.getEditor('root.SDG_INDICATOR');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -599,7 +599,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('SDG_SERIES_DESCR', "Este indicador se calcula a partir del total de personas fallecidas, desaparecidas y afectados a causa de ocurrencia de desastres, entre la población total del país por 100 000 habitantes.");
+        var currentValue = normalizeCurrentValue('SDG_SERIES_DESCR', "El indicador mide el número de personas que sufren un efecto negativo a causa de la ocurrencia de un desastre, por cada 100 000 habitantes, para poder dimensionar su impacto en la población nacional. Los desastres tienen un efecto negativo sobre las condiciones de vida de la población, el desempeño económico de los países o regiones en que ocurren, además de que perjudican el acervo y los servicios ambientales.");
         var propertyEditor = editor.getEditor('root.SDG_SERIES_DESCR');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -613,7 +613,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('META_LAST_UPDATE', "11 de octubre de 2022");
+        var currentValue = normalizeCurrentValue('META_LAST_UPDATE', "11 de agosto de 2022");
         var propertyEditor = editor.getEditor('root.META_LAST_UPDATE');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -643,7 +643,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('CONTACT_ORGANISATION', "");
+        var currentValue = normalizeCurrentValue('CONTACT_ORGANISATION', "Centro Nacional de Prevención de Desastres (CENAPRED).");
         var propertyEditor = editor.getEditor('root.CONTACT_ORGANISATION');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -671,7 +671,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('ORGANISATION_UNIT', "Director General del CENAPRED");
+        var currentValue = normalizeCurrentValue('ORGANISATION_UNIT', "CENAPRED");
         var propertyEditor = editor.getEditor('root.ORGANISATION_UNIT');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -685,7 +685,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('CONTACT_FUNCT', "");
+        var currentValue = normalizeCurrentValue('CONTACT_FUNCT', "Director General del CENAPRED");
         var propertyEditor = editor.getEditor('root.CONTACT_FUNCT');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -699,7 +699,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('CONTACT_PHONE', "Delfín Madrigal 665, colonia Pedregal de Santo Domingo, Ciudad de México (55) 5511036000, ext. 72010");
+        var currentValue = normalizeCurrentValue('CONTACT_PHONE', "(55) 5511036000, ext. 72010");
         var propertyEditor = editor.getEditor('root.CONTACT_PHONE');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -725,25 +725,13 @@ data-event-label="high"
       }
     propertyEditorAccessibilityFixes(editor.getEditor('root.CONTACT_MAIL'));
 
-    
-      try {
-        var currentValue = normalizeCurrentValue('CONTACT_EMAIL', "");
-        var propertyEditor = editor.getEditor('root.CONTACT_EMAIL');
-        propertyEditor.setValue(null);
-        propertyEditor.setValue(currentValue);
-        
-      }
-      catch (e) {
-        console.log(e.message);
-        console.log('Unable to set config key: CONTACT_EMAIL');
-      }
     propertyEditorAccessibilityFixes(editor.getEditor('root.CONTACT_EMAIL'));
 
     propertyEditorAccessibilityFixes(editor.getEditor('root.IND_DEF_CON_CLASS'));
 
     
       try {
-        var currentValue = normalizeCurrentValue('STAT_CONC_DEF', "## Definicion:\nEl indicador mide el número de personas que sufren un efecto negativo a causa de la ocurrencia de un desastre, por cada 100 000 habitantes, para poder dimensionar su impacto en la población nacional. Los desastres tienen un efecto negativo sobre las condiciones de vida de la población, el desempeño económico de los países o regiones en que ocurren, además de que perjudican el acervo y los servicios ambientales.");
+        var currentValue = normalizeCurrentValue('STAT_CONC_DEF', "Este indicador se calcula a partir del total de personas fallecidas, desaparecidas y afectados a causa de ocurrencia de desastres, entre la población total del país por 100 000 habitantes.");
         var propertyEditor = editor.getEditor('root.STAT_CONC_DEF');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -771,7 +759,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('CLASS_SYSTEM', "Comisión Económica para América Latina y el Caribe (CEPAL), Manual para la evaluación del impacto socioeconómico y ambiental de los desastres, 2003.");
+        var currentValue = normalizeCurrentValue('CLASS_SYSTEM', "");
         var propertyEditor = editor.getEditor('root.CLASS_SYSTEM');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -787,7 +775,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('SOURCE_TYPE', "A partir del 1 de agosto de 2019, Secretaría de Seguridad y Protección Ciudadana (SSPS). Centro Nacional de Prevención de Desastres (CENAPRED). Consejo Nacional de Población (CONAPO), Secretaría General, Dirección General de Estudios Sociodemográficos y Prospectiva. Instituto Nacional de Estadística y Geografía (INEGI). Evaluación del impacto socioeconómico de los principales desastres naturales ocurridos en la República Mexicana.");
+        var currentValue = normalizeCurrentValue('SOURCE_TYPE', "A partir del 1 de agosto de 2019, Secretaría de Seguridad y Protección Ciudadana (SSPS). Centro Nacional de Prevención de Desastres (CENAPRED).\nConsejo Nacional de Población (CONAPO), Secretaría General, Dirección General de Estudios Sociodemográficos y Prospectiva.  \nInstituto Nacional de Estadística y Geografía (INEGI). Evaluación del impacto socioeconómico de los principales desastres naturales ocurridos en la República Mexicana.");
         var propertyEditor = editor.getEditor('root.SOURCE_TYPE');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -857,7 +845,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('COMPILING_ORG', "Centro Nacional de Prevención de Desastres (CENAPRED).");
+        var currentValue = normalizeCurrentValue('COMPILING_ORG', "");
         var propertyEditor = editor.getEditor('root.COMPILING_ORG');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -887,7 +875,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('RATIONALE', "La reducción del impacto directo e indirecto de los desastres, es un elemento que permite abonar a los esfuerzos globales relativos al desarrollo sostenible, mientras que en países con impactos recurrentes con poca preparación, se ha documentado retrasos en el desarrollo económico y social, aquellas naciones que mediante la correcta gestión de sus riesgos han consolidado sus esfuerzos preventivos mismos que se ven reflejados en la reducción del costo de los desastres, lo que permite que estos recursos se asignen a otros procesos de desarrollo.");
+        var currentValue = normalizeCurrentValue('RATIONALE', "");
         var propertyEditor = editor.getEditor('root.RATIONALE');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -901,7 +889,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('REC_USE_LIM', "Los datos de personas muertas por la ocurrencia de desastres y de personas afectadas por la ocurrencia de desastres incluyen dentro de los fenómenos antrópicos (químicos, socioorganizativos y sanitarios) y dentro de los fenómenos de origen natural (geológicos e hidrometeorológicos). No se cuenta con la información sobre personas desaparecidas, ya que dentro de las principales fuentes de información del CENAPRED (CENACOM, Secretaría de Salud) no se dispone de dicha información.");
+        var currentValue = normalizeCurrentValue('REC_USE_LIM', "");
         var propertyEditor = editor.getEditor('root.REC_USE_LIM');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -929,7 +917,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('DATA_VALIDATION', "");
+        var currentValue = normalizeCurrentValue('DATA_VALIDATION', "Los datos de personas muertas por la ocurrencia de desastres y de personas afectadas por la ocurrencia de desastres incluyen dentro de los fenómenos antrópicos (químicos, socioorganizativos y sanitarios) y dentro de los fenómenos de origen natural (geológicos e hidrometeorológicos). No se cuenta con la información sobre personas desaparecidas, ya que dentro de las principales fuentes de información del CENAPRED (CENACOM, Secretaría de Salud) no se dispone de dicha información.");
         var propertyEditor = editor.getEditor('root.DATA_VALIDATION');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -999,7 +987,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('COVERAGE', "Nacional");
+        var currentValue = normalizeCurrentValue('COVERAGE', "2000 - 2021");
         var propertyEditor = editor.getEditor('root.COVERAGE');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -1027,7 +1015,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('OTHER_DOC', "<a href=\"https://agenda2030.mx/docs/files/csv/zip/1.5.1_es.zip\">Datos para el cálculo </a>");
+        var currentValue = normalizeCurrentValue('OTHER_DOC', "<a href=\"https://agenda2030.mx/docs/files/csv/zip/1.5.1_es.zip\">Datos para el cálculo</a>");
         var propertyEditor = editor.getEditor('root.OTHER_DOC');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -1055,7 +1043,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('national_metadata_updated_date', "2022-12-12");
+        var currentValue = normalizeCurrentValue('national_metadata_updated_date', "2023-03-13");
         var propertyEditor = editor.getEditor('root.national_metadata_updated_date');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -1219,12 +1207,12 @@ ga('send', 'pageview');
 <script>translations['search'] = translations['search'] || {};
     translations['search']['search'] = 'Search';</script>
 
-<script src='/assets/js/sdg.js?v=20230209220524'></script>
+<script src='/assets/js/sdg.js?v=20230313195604'></script>
 
 
     
     
-    <script src="/assets/js/custom.js?v=20230209220524"></script><script>
+    <script src="/assets/js/custom.js?v=20230313195604"></script><script>
     new indicatorInit();
     new accessibilitySwitcher();
 </script>

@@ -129,7 +129,7 @@ var translations = {
         <link res="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" crossorigin="">
         <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/3.2.3/css/fixedColumns.dataTables.min.css" crossorigin="">
-        <link rel="stylesheet" href="/assets/css/style.css?v=20230209220524">
+        <link rel="stylesheet" href="/assets/css/style.css?v=20230313195604">
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
           integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
           crossorigin=""/>
@@ -569,7 +569,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('SDG_GOAL', "Poner fin a la pobreza en todas sus formas y en todo el mundo, con archvio de configuración");
+        var currentValue = normalizeCurrentValue('SDG_GOAL', "Objetivo 1. Fin de la pobreza ");
         var propertyEditor = editor.getEditor('root.SDG_GOAL');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -583,7 +583,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('SDG_TARGET', "De aquí a 2030, erradicar para todas las personas y en todo el mundo la pobreza extrema (actualmente se considera que sufren pobreza extrema las personas que viven con menos de 1,25 dólares de los Estados Unidos al día)");
+        var currentValue = normalizeCurrentValue('SDG_TARGET', "1.1 De aquí a 2030, erradicar para todas las personas y en todo el mundo la pobreza extrema (a partir de octubre de 2015, se considera que sufren pobreza extrema las personas que viven con menos de 1.90 dólares de los Estados Unidos al día)");
         var propertyEditor = editor.getEditor('root.SDG_TARGET');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -597,7 +597,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('SDG_INDICATOR', "Indicador 1.1.1: Proporción de la población que vive por debajo del umbral de pobreza internacional por sexo, edad, situación laboral y ubicación geográfica (urbana/rural)");
+        var currentValue = normalizeCurrentValue('SDG_INDICATOR', "1.1.1  Proporción de la población que vive por debajo del umbral internacional de la pobreza (1.90 dólares diarios), desglosada por sexo, edad, situación laboral y ubicación geográfica (urbano y rural)");
         var propertyEditor = editor.getEditor('root.SDG_INDICATOR');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -611,7 +611,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('SDG_SERIES_DESCR', "Descripción de prueba para archivo de configuración");
+        var currentValue = normalizeCurrentValue('SDG_SERIES_DESCR', "Es el porcentaje de la población a nivel nacional que en el año del cálculo vive con menos del equivalente a 1.90 dólares diarios a precios de 2011, según la paridad del poder adquisitivo.");
         var propertyEditor = editor.getEditor('root.SDG_SERIES_DESCR');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -625,7 +625,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('META_LAST_UPDATE', "");
+        var currentValue = normalizeCurrentValue('META_LAST_UPDATE', "12 de noviembre de 2019");
         var propertyEditor = editor.getEditor('root.META_LAST_UPDATE');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -655,7 +655,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('CONTACT_ORGANISATION', "");
+        var currentValue = normalizeCurrentValue('CONTACT_ORGANISATION', "Consejo Nacional de Evaluación de la Política de Desarrollo Social (CONEVAL).");
         var propertyEditor = editor.getEditor('root.CONTACT_ORGANISATION');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -669,7 +669,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('CONTACT_NAME', "");
+        var currentValue = normalizeCurrentValue('CONTACT_NAME', "Alida Marcela Gutiérrez Landeros");
         var propertyEditor = editor.getEditor('root.CONTACT_NAME');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -697,7 +697,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('CONTACT_FUNCT', "");
+        var currentValue = normalizeCurrentValue('CONTACT_FUNCT', "Coordinadora General de Análisis de la Pobreza");
         var propertyEditor = editor.getEditor('root.CONTACT_FUNCT');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -711,7 +711,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('CONTACT_PHONE', "");
+        var currentValue = normalizeCurrentValue('CONTACT_PHONE', "54 81 72 75 o 00, ext. 70075");
         var propertyEditor = editor.getEditor('root.CONTACT_PHONE');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -725,7 +725,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('CONTACT_MAIL', "contactoprueba@inegi.org.mx");
+        var currentValue = normalizeCurrentValue('CONTACT_MAIL', "mgutierrez@coneval.org.mx");
         var propertyEditor = editor.getEditor('root.CONTACT_MAIL');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -737,25 +737,13 @@ data-event-label="high"
       }
     propertyEditorAccessibilityFixes(editor.getEditor('root.CONTACT_MAIL'));
 
-    
-      try {
-        var currentValue = normalizeCurrentValue('CONTACT_EMAIL', "");
-        var propertyEditor = editor.getEditor('root.CONTACT_EMAIL');
-        propertyEditor.setValue(null);
-        propertyEditor.setValue(currentValue);
-        
-      }
-      catch (e) {
-        console.log(e.message);
-        console.log('Unable to set config key: CONTACT_EMAIL');
-      }
     propertyEditorAccessibilityFixes(editor.getEditor('root.CONTACT_EMAIL'));
 
     propertyEditorAccessibilityFixes(editor.getEditor('root.IND_DEF_CON_CLASS'));
 
     
       try {
-        var currentValue = normalizeCurrentValue('STAT_CONC_DEF', "proporción de la población por debajo del umbral de pobreza internacional se define como el porcentaje de la población pobreza internacional se define como el porcentaje de la población que vive con menos de 1,90 dólares al día a precios internacionales de 2011.");
+        var currentValue = normalizeCurrentValue('STAT_CONC_DEF', "Este indicador resulta de dividir el número de personas con ingreso per cápita inferior a 1.90 dólares diarios a precios de 2011, entre la población de referencia total, multiplicado por 100.");
         var propertyEditor = editor.getEditor('root.STAT_CONC_DEF');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -769,7 +757,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('UNIT_MEASURE', "");
+        var currentValue = normalizeCurrentValue('UNIT_MEASURE', "Porcentaje");
         var propertyEditor = editor.getEditor('root.UNIT_MEASURE');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -799,7 +787,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('SOURCE_TYPE', "Fuentes…");
+        var currentValue = normalizeCurrentValue('SOURCE_TYPE', "Instituto Nacional de Estadística y Geografía (INEGI). Índice Nacional de Precios al Consumidor (INPC). https://www.inegi.org.mx/programas/inpc/2018/ <br> Banco Mundial (BM). Global Purchasing Power Parities and Real Expenditures. 2011 International Comparison Program. http://icp.worldbank.org/ <br> Instituto Nacional de Estadística y Geografía (INEGI). Encuesta Nacional de Ingresos y Gastos de los Hogares (ENIGH) 1992-2014 y el Modelo Estadístico para la Continuidad (MEC) del MCS-ENIGH 2016, 2018 y 2020.");
         var propertyEditor = editor.getEditor('root.SOURCE_TYPE');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -841,7 +829,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('REL_CAL_POLICY', "");
+        var currentValue = normalizeCurrentValue('REL_CAL_POLICY', "Segundo semestre de 2021");
         var propertyEditor = editor.getEditor('root.REL_CAL_POLICY');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -855,7 +843,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('DATA_SOURCE', "");
+        var currentValue = normalizeCurrentValue('DATA_SOURCE', "Banco Mundial (BM) http://www.bancomundial.org");
         var propertyEditor = editor.getEditor('root.DATA_SOURCE');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -899,7 +887,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('RATIONALE', "");
+        var currentValue = normalizeCurrentValue('RATIONALE', "Este indicador busca medir la pobreza a través de un estándar internacional acorde a los países con menores ingresos, por ello, generalmente se asocia a la población que vive en pobreza extrema. El indicador está directamente ligado al Objetivo 1, especifico, de la Meta 1.1. Erradicar la pobreza extrema para todas las personas y en el mundo. Este indicador permite dar seguimiento a la evolución de la pobreza extrema a través del tiempo y permite realizar comparaciones internacionales de pobreza en los países.");
         var propertyEditor = editor.getEditor('root.RATIONALE');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -941,7 +929,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('DATA_VALIDATION', "");
+        var currentValue = normalizeCurrentValue('DATA_VALIDATION', "1. Cálculo del ingreso per cápita ajustado.- En primer lugar, se utiliza el ingreso corriente total de la medición de pobreza por ingresos reportada por CONEVAL (para mayor información sobre su composición consultar http://www.coneval.org.mx). En segundo lugar, se deflacta el ingreso con el Índice Nacional de Precios al Consumidor (INPC, base 2ª quincena de julio de 2018=100) al mes de agosto de cada año en que INEGI capta la información de ingresos y gastos de los hogares. Posteriormente, se realiza un ajuste a los ingresos multiplicándolos por la propensión marginal al consumo (únicamente para la desagregación, rural, urbano y nacional). Esta propensión se estima a partir de la razón entre el Consumo Privado y el Producto Interno Bruto (PIB) con series originales base 2008 a precios corrientes (en 2018 se usa la base 2013). <br> 2. Construcción de la línea de referencia.- La línea de la pobreza de $1.90 dólares se construye a partir del tipo de cambio de paridad de poder adquisitivo (PPA) de 2011 publicado por el Banco Mundial (7.673013 pesos por cada dólar americano a precios internacionales). El resultado se lleva a precios de agosto de cada año de medición, utilizando el Índice Nacional de Precios al Consumidor (INPC) publicado por el INEGI. Finalmente, se multiplica por 30 para obtener la línea de referencia mensual. <br> 3. Cálculo del número de personas con ingresos ajustados por debajo de la línea.- Se compara el ingreso per cápita ajustado mensual con la línea de referencia, identificando y contabilizando el número de personas cuyo ingreso es menor a la línea. Se crea el factor de expansión de personas multiplicando el tamaño del hogar por el factor de expansión y se usa para calcular el porcentaje total de personas con ingresos por debajo de la línea de referencia. La ENIGH 2005, a diferencia de las llevadas a cabo en años anteriores de manera bienal, corresponde a una edición especial, por lo que la ENIGH continuará actualizándose cada dos años. <br> */ La actualización del indicador está sujeta a la publicación de los microdatos por parte de INEGI. 1/ Para el año 2005 se realizó una medición.");
         var propertyEditor = editor.getEditor('root.DATA_VALIDATION');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -1011,7 +999,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('COVERAGE', "");
+        var currentValue = normalizeCurrentValue('COVERAGE', "1992-2018");
         var propertyEditor = editor.getEditor('root.COVERAGE');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -1053,7 +1041,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('national_data_updated_date', "2022-12-14");
+        var currentValue = normalizeCurrentValue('national_data_updated_date', "2023-03-09");
         var propertyEditor = editor.getEditor('root.national_data_updated_date');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -1067,7 +1055,7 @@ data-event-label="high"
 
     
       try {
-        var currentValue = normalizeCurrentValue('national_metadata_updated_date', "2022-12-16");
+        var currentValue = normalizeCurrentValue('national_metadata_updated_date', "2023-03-13");
         var propertyEditor = editor.getEditor('root.national_metadata_updated_date');
         propertyEditor.setValue(null);
         propertyEditor.setValue(currentValue);
@@ -1231,12 +1219,12 @@ ga('send', 'pageview');
 <script>translations['search'] = translations['search'] || {};
     translations['search']['search'] = 'Search';</script>
 
-<script src='/assets/js/sdg.js?v=20230209220524'></script>
+<script src='/assets/js/sdg.js?v=20230313195604'></script>
 
 
     
     
-    <script src="/assets/js/custom.js?v=20230209220524"></script><script>
+    <script src="/assets/js/custom.js?v=20230313195604"></script><script>
     new indicatorInit();
     new accessibilitySwitcher();
 </script>
