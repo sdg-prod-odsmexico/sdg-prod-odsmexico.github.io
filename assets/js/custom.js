@@ -1,6 +1,6 @@
 // Add any custom javafuscript here.
 //arreglo de usuarios y contraseñas
-
+var URLactual = window.location.href;
 var usucontra=[
   {
     "usuario":"sandra.marquez",
@@ -8,7 +8,7 @@ var usucontra=[
   },
   {
     "usuario":"sergio.nieto",
-    "contra":"jefe"
+    "contra":"bombón"
   }
 ]
 //colores para el  mapa
@@ -78,7 +78,19 @@ function myMapColorFunction(indicatorId, goalId) {
       break;
   }
 }
+function opcUsu(){
+  if(document.getElementById("cs").style.display==="block")
+  {
+    document.getElementById("cs").style.display="none";
+  }
+  else{
+     document.getElementById("cs").style.display="block";
+  }
+}
+
 function revisaContra() {
+  localStorage.clear();
+  document.getElementById("ususesion").innerHTML= "";
   var contra= document.getElementById("contra").value
   var usu= document.getElementById("usu").value;
   document.getElementById("sContra").innerHTML="";
@@ -117,6 +129,8 @@ function revisaContra() {
           document.getElementById("dUsu").style.visibility="hidden";
           document.getElementById("dContra").style.visibility="hidden";
           document.body.style.overflow = "auto";
+          localStorage.setItem('usuario', JSON.stringify(usu));
+          document.getElementById("ususesion").innerHTML= usu;
         }
       }
     }
@@ -129,4 +143,28 @@ function revisaContra() {
     document.getElementById("dContra").style.visibility="hidden";
   }
 }
-document.body.style.overflow = "hidden";
+
+if(!URLactual.includes("prod")){
+  if (URLactual=="https://sdg-odsmexico.github.io/site/"){
+    document.body.style.overflow = "hidden";
+    localStorage.clear();
+    document.getElementById("ususesion").innerHTML= "";
+    document.getElementById("divContra").style.display="block";
+    document.getElementById("sContra").innerHTML="";
+    document.getElementById("dContra").style.visibility="hidden";
+    document.getElementById("sUsu").innerHTML="";
+    document.getElementById("dUsu").style.visibility="hidden";
+    document.getElementById("dUsuar").style.display="block";
+  }
+  else{
+    let datoUsuario = JSON.parse(localStorage.getItem('usuario'));
+    //console.log(JSON.parse(localStorage.getItem('usuario')));
+    document.getElementById("ususesion").innerHTML= datoUsuario;
+    document.body.style.overflow = "auto";
+    document.getElementById("dUsuar").style.display="block";
+  }
+}
+else{
+  document.getElementById("divContra").style.display="none";
+  document.getElementById("dUsuar").style.display="none";
+}

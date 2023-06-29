@@ -140,7 +140,7 @@ var translations = {
         <link res="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" crossorigin="">
         <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/3.2.3/css/fixedColumns.dataTables.min.css" crossorigin="">
-        <link rel="stylesheet" href="/assets/css/style.css?v=20230629142112">
+        <link rel="stylesheet" href="/assets/css/style.css?v=20230629170015">
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
           integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
           crossorigin=""/>
@@ -198,6 +198,18 @@ layout-frontpage
     
     Este es un sitio web de desarrollo. Agradecemos sus <a href="mailto:test@example.com">comentarios</a>.
     
+<divv id="dUsuar" class="divUsuar">
+  <div class="divUsuCS">
+    <div>Usuario:</div> 
+    <div class="padLeft">
+      <a id="ususesion" onclick="opcUsu()" class="aUsu"></a>
+      <div id="cs" class="display">
+        <div class="divaCS"><a href="/" class="aCS">Cerrar sesión</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
   </div>
 </div>
 
@@ -560,23 +572,23 @@ interdum risus enim vitae tortor. Donec feugiat accumsan rutrum.</p>
 </div>
 <div id="divContra">
         <div class="divFlex">
-            <div class="margAuto"><img src="/site/assets/img/LogoODS2_es.png"/></div>
+            <div class="margAuto"><img src="/site/assets/img/LogoODS2_es.png" class="imgODS"/></div>
             <div class="divWhite"></div>
             <div class="margAuto width35">
-                <div class="margleft-5">
-                <div><input type="text" id="usu" name="usu" value="" class="inputUsu"  /></div>
-                <div class="display-flex">
-                    <div class="padTop colorWhite width70">Usuario </div>
-                    <div id="dUsu"><span id="sUsu" class="errorUsuContra"></span></div>
-                </div>
-                <div class="padTop1"><input type="password" id="contra" name="contra" value="" class="inputCon" /></div>
-                <div class="display-flex">
-                    <div class="padTop colorWhite width70">Contraseña</div>
-                    <div id="dContra"><span id="sContra" class="errorUsuContra"></span></div>
-                </div>
-                <div class="divBtn">
-                    <button type="button" class="btnAcepta" onclick="revisaContra()">Aceptar</button>
-                </div>
+                <div class="margleft-5 font-1">
+                    <div><input type="text" id="usu" name="usu" value="" class="inputUsu"  /></div>
+                    <div class="display-flex">
+                        <div class="padTop colorWhite width70">Usuario </div>
+                        <div id="dUsu"><span id="sUsu" class="errorUsuContra"></span></div>
+                    </div>
+                    <div class="padTop1"><input type="password" id="contra" name="contra" value="" class="inputCon" /></div>
+                    <div class="display-flex">
+                        <div class="padTop colorWhite width70">Contraseña</div>
+                        <div id="dContra"><span id="sContra" class="errorUsuContra"></span></div>
+                    </div>
+                    <div class="divBtn">
+                        <button type="button" class="btnAcepta" onclick="revisaContra()">Aceptar</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -663,12 +675,12 @@ ga('send', 'pageview');
 <script>translations['search'] = translations['search'] || {};
     translations['search']['search'] = 'Buscar';</script>
 
-<script src='/assets/js/sdg.js?v=20230629142112'></script>
+<script src='/assets/js/sdg.js?v=20230629170015'></script>
 
 
     
     
-    <script src="/assets/js/custom.js?v=20230629142112"></script><script>
+    <script src="/assets/js/custom.js?v=20230629170015"></script><script>
     new indicatorInit();
     new accessibilitySwitcher();
 </script>
