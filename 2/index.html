@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
-        <script crossorigin="anonymous" src="https://polyfill.io/v3/polyfill.min.js?features=Promise%2CArray.prototype.forEach%2CString.prototype.includes%2CURLSearchParams%2CCustomEvent%2CArray.prototype.includes%2CArray.prototype.filter%2CArray.prototype.some%2CArray.prototype.find%2CArray.prototype.reduce%2CObject.assign%2CArray.isArray%2CObject.values%2CObject.entries%2CArray.from%2CSet%2CArray.prototype.findIndex"></script>
+        <script crossorigin="anonymous" src="https://polyfill.io/v3/polyfill.min.js?features=Promise%2CArray.prototype.forEach%2CString.prototype.includes%2CURLSearchParams%2CCustomEvent%2CArray.prototype.includes%2CArray.prototype.filter%2CArray.prototype.some%2CArray.prototype.find%2CArray.prototype.reduce%2CObject.assign%2CArray.isArray%2CObject.values%2CObject.entries%2CArray.from%2CSet%2CArray.prototype.findIndex%2Cfetch"></script>
 <script crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/javascript-canvas-to-blob/3.15.0/js/canvas-to-blob.min.js"></script>
 
         <script>
@@ -43,6 +43,21 @@ var opensdg = {
   ignoredDisaggregations: null,
 
   language: 'es',
+
+  mapColors: {
+    "default": [
+        "#c4e1c6",
+        "#b0d1b3",
+        "#9bc2a1",
+        "#87b28f",
+        "#74a37c",
+        "#60946b",
+        "#4d8559",
+        "#3a7747",
+        "#276836"
+    ]
+}
+,
 };
 
 </script>
@@ -103,14 +118,13 @@ var translations = {
         ================================================== -->
 
         
+    
     <title>Objetivo 2 - Hambre Cero - Indicadores para los Objetivos de Desarrollo Sostenible</title>
+    
 
 
 
-        <meta name="description" content="">
-        <meta property="og:description" content="">
         
-        <link rel="canonical" href="/">
 
         <!--[if IE 9]>
         <script src="/assets/js/lib/classList.js"></script>
@@ -121,13 +135,14 @@ var translations = {
 <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16x16.png">
 <link rel="icon" type="image/x-icon" href="/assets/img/favicons/favicon.ico" />
 
+        
 
         
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
         <link res="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" crossorigin="">
         <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/3.2.3/css/fixedColumns.dataTables.min.css" crossorigin="">
-        <link rel="stylesheet" href="/assets/css/style.css?v=20230313200321">
+        <link rel="stylesheet" href="/assets/css/style.css?v=20230629142112">
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
           integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
           crossorigin=""/>
@@ -154,6 +169,9 @@ var translations = {
 
         
         
+
+        
+
 
         <!--[if IE]>
         <link rel="stylesheet" href="/assets/css/ie.css">
@@ -294,7 +312,11 @@ data-event-label="high"
                 <img src="https://open-sdg.org/sdg-translations/assets/img/goals/es/2.png" alt="Hambre Cero - Objetivo 2" id="goal-2" class="goal-icon-image goal-icon-image-" />
             </div>
             <div class="col-8 col-md-9 col-lg-10 goal-details">
-                <h1>Poner fin al hambre, lograr la seguridad alimentaria y la mejora de la nutrición y promover la agricultura sostenible</h1>
+                <h1>
+                    
+                        Poner fin al hambre, lograr la seguridad alimentaria y la mejora de la nutrición y promover la agricultura sostenible
+                    
+                </h1>
             </div>
         </div>
     </div>
@@ -348,7 +370,7 @@ data-event-label="high"
             </div>
             <div class="col goal-page-indicator-name">
               
-              <span class="indicator-name"><a href="/2-1-1">Prevalencia de la subalimentación</a></span>
+              <span class="indicator-name"><a href="/2-1-1/">Prevalencia de la subalimentación</a></span>
               
 
 
@@ -388,7 +410,7 @@ data-event-label="high"
             </div>
             <div class="col goal-page-indicator-name">
               
-              <span class="indicator-name"><a href="/2-1-2">2.1.2 Proporción de la población con inseguridad alimentaria moderada o severa (carencia por acceso a la alimentación), desglosada por sexo y edad</a></span>
+              <span class="indicator-name"><a href="/2-1-2/">2.1.2 Proporción de la población con inseguridad alimentaria moderada o severa (carencia por acceso a la alimentación), desglosada por sexo y edad</a></span>
               
 
 
@@ -401,7 +423,7 @@ data-event-label="high"
 
 
 <span class="status complete">
-    <span class="status-inner">Informado</span>
+    <span class="status-inner">Informado en línea</span>
 </span>
 
 
@@ -443,7 +465,7 @@ data-event-label="high"
             </div>
             <div class="col goal-page-indicator-name">
               
-              <span class="indicator-name"><a href="/2-2-1">Prevalencia del retraso del crecimiento (estatura para la edad, desviación típica < -2 de la mediana de los patrones de crecimiento infantil de la Organización Mundial de la Salud (OMS)) entre los niños menores de 5 años</a></span>
+              <span class="indicator-name"><a href="/2-2-1/">Prevalencia del retraso del crecimiento (estatura para la edad, desviación típica < -2 de la mediana de los patrones de crecimiento infantil de la Organización Mundial de la Salud (OMS)) entre los niños menores de 5 años</a></span>
               
 
 
@@ -483,7 +505,7 @@ data-event-label="high"
             </div>
             <div class="col goal-page-indicator-name">
               
-              <span class="indicator-name"><a href="/2-2-2">Prevalencia de la malnutrición (peso para la estatura, desviación típica > +2 o < -2 de la mediana de los patrones de crecimiento infantil de la OMS) entre los niños menores de 5 años, desglosada por tipo (emaciación y sobrepeso)</a></span>
+              <span class="indicator-name"><a href="/2-2-2/">Prevalencia de la malnutrición (peso para la estatura, desviación típica > +2 o < -2 de la mediana de los patrones de crecimiento infantil de la OMS) entre los niños menores de 5 años, desglosada por tipo (emaciación y sobrepeso)</a></span>
               
 
 
@@ -523,7 +545,7 @@ data-event-label="high"
             </div>
             <div class="col goal-page-indicator-name">
               
-              <span class="indicator-name"><a href="/2-2-3">Prevalencia de la anemia en las mujeres de entre 15 y 49 años, desglosada por embarazo (porcentaje)</a></span>
+              <span class="indicator-name"><a href="/2-2-3/">Prevalencia de la anemia en las mujeres de entre 15 y 49 años, desglosada por embarazo (porcentaje)</a></span>
               
 
 
@@ -578,7 +600,7 @@ data-event-label="high"
             </div>
             <div class="col goal-page-indicator-name">
               
-              <span class="indicator-name"><a href="/2-3-1">Volumen de producción por unidad de trabajo desglosado por tamaño y tipo de explotación (agropecuaria/ganadera/forestal)</a></span>
+              <span class="indicator-name"><a href="/2-3-1/">Volumen de producción por unidad de trabajo desglosado por tamaño y tipo de explotación (agropecuaria/ganadera/forestal)</a></span>
               
 
 
@@ -618,7 +640,7 @@ data-event-label="high"
             </div>
             <div class="col goal-page-indicator-name">
               
-              <span class="indicator-name"><a href="/2-3-2">Media de ingresos de los productores de alimentos en pequeña escala, desglosada por sexo y condición indígena</a></span>
+              <span class="indicator-name"><a href="/2-3-2/">Media de ingresos de los productores de alimentos en pequeña escala, desglosada por sexo y condición indígena</a></span>
               
 
 
@@ -673,7 +695,7 @@ data-event-label="high"
             </div>
             <div class="col goal-page-indicator-name">
               
-              <span class="indicator-name"><a href="/2-4-1">Proporción de la superficie agrícola en que se practica una agricultura productiva y sostenible</a></span>
+              <span class="indicator-name"><a href="/2-4-1/">Proporción de la superficie agrícola en que se practica una agricultura productiva y sostenible</a></span>
               
 
 
@@ -728,7 +750,7 @@ data-event-label="high"
             </div>
             <div class="col goal-page-indicator-name">
               
-              <span class="indicator-name"><a href="/2-5-1">Número de recursos genéticos vegetales y animales para la alimentación y la agricultura preservados en instalaciones de conservación a medio y largo plazo</a></span>
+              <span class="indicator-name"><a href="/2-5-1/">Número de recursos genéticos vegetales y animales para la alimentación y la agricultura preservados en instalaciones de conservación a medio y largo plazo</a></span>
               
 
 
@@ -768,7 +790,7 @@ data-event-label="high"
             </div>
             <div class="col goal-page-indicator-name">
               
-              <span class="indicator-name"><a href="/2-5-2">Proporción de razas y variedades locales consideradas en riesgo de extinción</a></span>
+              <span class="indicator-name"><a href="/2-5-2/">Proporción de razas y variedades locales consideradas en riesgo de extinción</a></span>
               
 
 
@@ -823,7 +845,7 @@ data-event-label="high"
             </div>
             <div class="col goal-page-indicator-name">
               
-              <span class="indicator-name"><a href="/2-a-1">Índice de orientación agrícola para el gasto público</a></span>
+              <span class="indicator-name"><a href="/2-a-1/">Índice de orientación agrícola para el gasto público</a></span>
               
 
 
@@ -863,7 +885,7 @@ data-event-label="high"
             </div>
             <div class="col goal-page-indicator-name">
               
-              <span class="indicator-name"><a href="/2-a-2">Total de corrientes oficiales de recursos (asistencia oficial para el desarrollo más otras corrientes oficiales) destinado al sector agrícola</a></span>
+              <span class="indicator-name"><a href="/2-a-2/">Total de corrientes oficiales de recursos (asistencia oficial para el desarrollo más otras corrientes oficiales) destinado al sector agrícola</a></span>
               
 
 
@@ -918,7 +940,7 @@ data-event-label="high"
             </div>
             <div class="col goal-page-indicator-name">
               
-              <span class="indicator-name"><a href="/2-b-1">Subsidios a la exportación de productos agropecuarios</a></span>
+              <span class="indicator-name"><a href="/2-b-1/">Subsidios a la exportación de productos agropecuarios</a></span>
               
 
 
@@ -973,7 +995,7 @@ data-event-label="high"
             </div>
             <div class="col goal-page-indicator-name">
               
-              <span class="indicator-name"><a href="/2-c-1">Indicador de anomalías en los precios de los alimentos</a></span>
+              <span class="indicator-name"><a href="/2-c-1/">Indicador de anomalías en los precios de los alimentos</a></span>
               
 
 
@@ -1005,7 +1027,7 @@ data-event-label="high"
 </div>
 
 
-<footer role="contentinfo">
+<footer role="contentinfo" style="display:none;">
     <div class="container">
         <div class="row">
             <div class="col">
@@ -1086,12 +1108,12 @@ ga('send', 'pageview');
 <script>translations['search'] = translations['search'] || {};
     translations['search']['search'] = 'Buscar';</script>
 
-<script src='/assets/js/sdg.js?v=20230313200321'></script>
+<script src='/assets/js/sdg.js?v=20230629142112'></script>
 
 
     
     
-    <script src="/assets/js/custom.js?v=20230313200321"></script><script>
+    <script src="/assets/js/custom.js?v=20230629142112"></script><script>
     new indicatorInit();
     new accessibilitySwitcher();
 </script>
@@ -1099,3 +1121,4 @@ ga('send', 'pageview');
 
 </body>
 </html>
+
